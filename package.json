@@ -1,0 +1,41 @@
+{
+  "name": "@chriscamp/sf-data-cloud-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Salesforce Data Cloud operations",
+  "type": "module",
+  "bin": {
+    "sf-data-cloud-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "salesforce",
+    "data-cloud",
+    "ai"
+  ],
+  "author": "Chris Camp",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChrisCampTN/sf-data-cloud-mcp.git"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.3"
+  }
+}
