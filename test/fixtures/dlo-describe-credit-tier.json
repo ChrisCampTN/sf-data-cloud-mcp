@@ -1,0 +1,11 @@
+{
+  "table": "credit_tier_models__dll",
+  "columns": [
+    { "name": "Version__c", "type": "VARCHAR" },
+    { "name": "Key__c", "type": "VARCHAR" },
+    { "name": "MinScore__c", "type": "DECIMAL" },
+    { "name": "TierName__c", "type": "VARCHAR" },
+    { "name": "MaxScore__c", "type": "DECIMAL" },
+    { "name": "IsActive__c", "type": "BOOLEAN" }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "ssot__Account__dlm",
+    "label": "Account",
+    "category": "PROFILE",
+    "fields": 115,
+    "isSegmentable": true,
+    "dataSpace": "default"
+  },
+  {
+    "name": "PRA_BillingAccount__dlm",
+    "label": "PRA Billing Account",
+    "category": "OTHER",
+    "fields": 13,
+    "isSegmentable": false,
+    "dataSpace": "default"
+  },
+  {
+    "name": "PRA_CreditTierModels__dlm",
+    "label": "PRA Credit Tier Models",
+    "category": "OTHER",
+    "fields": 6,
+    "isSegmentable": false,
+    "dataSpace": "default"
+  }
+]

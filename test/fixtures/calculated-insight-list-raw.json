@@ -1,0 +1,18 @@
+[
+  {
+    "apiName": "PRA_Credit_Tier_Assignment__cio",
+    "calculatedInsightStatus": "ACTIVE",
+    "creationType": "Custom",
+    "dataSpace": "default",
+    "definitionStatus": "IN_USE",
+    "definitionType": "CALCULATED_METRIC",
+    "description": "CI #1: Assigns credit tier and term group to every Billing Account.",
+    "displayName": "PRA Credit Tier Assignment",
+    "expression": "SELECT PRA_BillingAccount__dlm.Provider_c_c__c AS ProviderId__c, PRA_CreditTierModels__dlm.TierName_c__c AS CreditTier__c, CASE WHEN PRA_BillingAccount__dlm.Term_c_c__c <= 3 THEN 'Short' WHEN PRA_BillingAccount__dlm.Term_c_c__c <= 6 THEN 'Medium' ELSE 'Standard' END AS TermGroup__c, COUNT(PRA_BillingAccount__dlm.Id_c__c) AS AccountCount__c FROM PRA_BillingAccount__dlm LEFT OUTER JOIN PRA_CreditTierModels__dlm ON (PRA_BillingAccount__dlm.Adjusted_Credit_Score_c_c__c >= PRA_CreditTierModels__dlm.MinScore_c__c AND PRA_BillingAccount__dlm.Adjusted_Credit_Score_c_c__c <= PRA_CreditTierModels__dlm.MaxScore_c__c AND PRA_CreditTierModels__dlm.IsActive_c__c = true) GROUP BY ProviderId__c, CreditTier__c, TermGroup__c",
+    "isEnabled": true,
+    "lastRunStatus": "SUCCESS",
+    "publishScheduleInterval": "NOT_SCHEDULED",
+    "dimensions": [],
+    "measures": []
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "ConversationTranscriptSearch",
+    "status": "READY",
+    "type": "HYBRID",
+    "sourceDmo": "ssot__ConversationEntry__dlm"
+  },
+  {
+    "name": "KA_HFA_Service",
+    "status": "IN_PROGRESS",
+    "type": "HYBRID",
+    "sourceDmo": "ssot__KnowledgeArticleVersion__dlm"
+  },
+  {
+    "name": "SetupPageSearchMetadataIndex_K7M3X",
+    "status": "READY",
+    "type": "HYBRID",
+    "sourceDmo": "SetupPageSearchMetadata__dlm"
+  }
+]

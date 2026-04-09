@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Account_00Df20000018YWM",
+    "label": "Account_00Df20000018YWM",
+    "status": "ACTIVE",
+    "lastRunStatus": "SUCCESS",
+    "connector": "SalesforceDotCom",
+    "type": "SFDC_PACKAGE_KIT",
+    "records": 150776
+  },
+  {
+    "name": "Balance_Sheet_Entry_c_00Df20000018YWM",
+    "label": "Balance_Sheet_Entry__c_00Df20000018YWM",
+    "status": "ACTIVE",
+    "lastRunStatus": "SUCCESS",
+    "connector": "SalesforceDotCom",
+    "type": "SFDC",
+    "records": 1132970
+  },
+  {
+    "name": "Billing_Account_c_00Df20000018YWM",
+    "label": "Billing_Account__c_00Df20000018YWM",
+    "status": "ACTIVE",
+    "lastRunStatus": "SUCCESS",
+    "connector": "SalesforceDotCom",
+    "type": "SFDC",
+    "records": 139481
+  },
+  {
+    "name": "Billing_Transaction_c_00Df20000018YWM",
+    "label": "Billing_Transaction__c_00Df20000018YWM",
+    "status": "ACTIVE",
+    "lastRunStatus": "SUCCESS",
+    "connector": "SalesforceDotCom",
+    "type": "SFDC",
+    "records": 1115517
+  },
+  {
+    "name": "BillingAccountStatusHist_00Df20000018YWM",
+    "label": "BillingAccountStatusHist_00Df20000018YWM",
+    "status": "ACTIVE",
+    "lastRunStatus": "SUCCESS",
+    "connector": "SalesforceDotCom",
+    "type": "SFDC",
+    "records": 369938
+  },
+  {
+    "name": "credit_tier_models",
+    "label": "credit_tier_models",
+    "status": "ACTIVE",
+    "lastRunStatus": "SUCCESS",
+    "connector": "UploadedFiles",
+    "type": "CONNECTORSFRAMEWORK",
+    "records": 10
+  },
+  {
+    "name": "Pricing_Model_Default_Curves",
+    "label": "Pricing Model Default Curves",
+    "status": "ACTIVE",
+    "lastRunStatus": "SUCCESS",
+    "connector": "UploadedFiles",
+    "type": "CONNECTORSFRAMEWORK",
+    "records": 48
+  }
+]

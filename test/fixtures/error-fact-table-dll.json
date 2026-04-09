@@ -1,0 +1,4 @@
+{
+  "errorCode": "VALIDATION_ERROR",
+  "message": "Error getting FactTable Billing_Account_c_00Df20000018YWM__dll, FullColumnName Billing_Account_c_00Df20000018YWM__dll.Provider_c__c cannot be found in dependencies or existing DMOs"
+}

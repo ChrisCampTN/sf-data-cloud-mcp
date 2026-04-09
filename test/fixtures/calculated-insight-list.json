@@ -1,0 +1,17 @@
+[
+  {
+    "apiName": "DailyPersonalizationRequests__cio",
+    "displayName": "Daily Personalization Requests",
+    "calculatedInsightStatus": "ACTIVE"
+  },
+  {
+    "apiName": "DailyPersonalizationUniques__cio",
+    "displayName": "Daily Personalization Uniques",
+    "calculatedInsightStatus": "ACTIVE"
+  },
+  {
+    "apiName": "PRA_Credit_Tier_Assignment__cio",
+    "displayName": "PRA Credit Tier Assignment",
+    "calculatedInsightStatus": "ACTIVE"
+  }
+]

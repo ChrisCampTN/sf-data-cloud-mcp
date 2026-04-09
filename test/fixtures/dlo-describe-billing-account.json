@@ -1,0 +1,24 @@
+{
+  "table": "Billing_Account_c_00Df20000018YWM__dll",
+  "columns": [
+    { "name": "KQ_Id__c", "type": "VARCHAR" },
+    { "name": "Default_Processed_Date_c__c", "type": "DATE" },
+    { "name": "Status_c__c", "type": "VARCHAR" },
+    { "name": "Made_Recission_Payments_c__c", "type": "DECIMAL" },
+    { "name": "cdp_sys_record_currency__c", "type": "VARCHAR" },
+    { "name": "Adjusted_Credit_Score_c__c", "type": "DECIMAL" },
+    { "name": "Default_Type_c__c", "type": "VARCHAR" },
+    { "name": "Amount_c__c", "type": "DECIMAL" },
+    { "name": "Required_Consecutive_Payments_c__c", "type": "DECIMAL" },
+    { "name": "Type_c__c", "type": "VARCHAR" },
+    { "name": "Id__c", "type": "VARCHAR" },
+    { "name": "Name__c", "type": "VARCHAR" },
+    { "name": "Recission_Window_Type_c__c", "type": "VARCHAR" },
+    { "name": "Dispute_Lost_Default_c__c", "type": "BOOLEAN" },
+    { "name": "Term_c__c", "type": "DECIMAL" },
+    { "name": "Remaining_Balance_formula_c__c", "type": "DECIMAL" },
+    { "name": "MadePayments_c__c", "type": "DECIMAL" },
+    { "name": "Provider_c__c", "type": "VARCHAR" },
+    { "name": "First_Successful_Payment_Date_Only_c__c", "type": "DATE" }
+  ]
+}

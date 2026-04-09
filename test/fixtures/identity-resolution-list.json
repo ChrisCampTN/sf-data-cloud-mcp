@@ -1,0 +1,17 @@
+[
+  {
+    "label": "MC - Identity Resolution",
+    "status": "PUBLISHED",
+    "lastJobStatus": "SUCCESS",
+    "unifiedProfiles": 205613,
+    "consolidationPercent": 29
+  },
+  { "label": "Individual Identity Resolution", "status": "PUBLISHED" },
+  {
+    "label": "MC - Account Resolution",
+    "status": "PUBLISHED",
+    "lastJobStatus": "SUCCESS",
+    "unifiedProfiles": 150702,
+    "consolidationPercent": 0
+  }
+]
