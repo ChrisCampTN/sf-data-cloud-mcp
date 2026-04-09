@@ -8,6 +8,8 @@ export interface UnwrappedResponse {
   totalSize?: number;
   nextPageUrl?: string;
   nextPageToken?: string;
+  /** The page size reported by the API (e.g. segments returns batchSize: 20). */
+  responseBatchSize?: number;
 }
 
 export function unwrapResponse(
@@ -62,6 +64,9 @@ export function unwrapResponse(
   return {
     items: (items ?? []) as Record<string, unknown>[],
     totalSize: typeof obj.totalSize === "number" ? obj.totalSize : undefined,
-    nextPageUrl: typeof obj.nextPageUrl === "string" ? obj.nextPageUrl : undefined
+    nextPageUrl: typeof obj.nextPageUrl === "string" ? obj.nextPageUrl : undefined,
+    responseBatchSize: typeof obj.batchSize === "number" && obj.batchSize > 0
+      ? obj.batchSize
+      : undefined
   };
 }

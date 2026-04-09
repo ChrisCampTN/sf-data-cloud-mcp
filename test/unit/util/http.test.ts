@@ -119,6 +119,105 @@ describe("DataCloudHttpClient", () => {
     expect(result).toEqual({ data: "ok" });
   });
 
+  it("paginatedGet: offset fallback with hintBatchSize (zero-signal API like DMOs)", async () => {
+    // DMO API returns flat array, no totalSize/batchSize/nextPageUrl
+    const mockFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({
+          dataModelObject: [{ name: "a" }, { name: "b" }]
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({
+          dataModelObject: [{ name: "c" }]
+        })
+      });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    const result = await client.paginatedGet(
+      "https://example.com/services/data/v66.0/ssot/data-model-objects",
+      "token123",
+      "dataModelObjects",
+      "https://example.com",
+      2 // hintBatchSize
+    );
+
+    expect(result.items).toHaveLength(3);
+    expect(result.items.map(i => i.name)).toEqual(["a", "b", "c"]);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockFetch.mock.calls[1][0]).toContain("offset=2");
+    expect(mockFetch.mock.calls[1][0]).toContain("batchSize=2");
+  });
+
+  it("paginatedGet: offset fallback with response totalSize (segments-style API)", async () => {
+    // Segments API returns totalSize and batchSize in response
+    const mockFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({
+          segments: [{ name: "a" }, { name: "b" }],
+          totalSize: 3,
+          batchSize: 2,
+          offset: 0
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({
+          segments: [{ name: "c" }],
+          totalSize: 3,
+          batchSize: 2,
+          offset: 2
+        })
+      });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    const result = await client.paginatedGet(
+      "https://example.com/services/data/v66.0/ssot/segments",
+      "token123",
+      "segments",
+      "https://example.com"
+    );
+
+    expect(result.items).toHaveLength(3);
+    expect(result.totalSize).toBe(3);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockFetch.mock.calls[1][0]).toContain("offset=2");
+  });
+
+  it("paginatedGet: stops when page is not full and no totalSize", async () => {
+    const mockFetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({
+        dataModelObject: [{ name: "a" }]
+      })
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    const result = await client.paginatedGet(
+      "https://example.com/services/data/v66.0/ssot/data-model-objects",
+      "token123",
+      "dataModelObjects",
+      "https://example.com",
+      50
+    );
+
+    expect(result.items).toHaveLength(1);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
   it("paginatedGet follows nextPageUrl", async () => {
     const mockFetch = vi
       .fn()

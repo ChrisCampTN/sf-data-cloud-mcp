@@ -46,4 +46,23 @@ describe("unwrapResponse", () => {
     const result = unwrapResponse(resp, "calculatedInsights");
     expect(result.nextPageToken).toBe("abc");
   });
+
+  it("extracts responseBatchSize when API reports it", () => {
+    const resp = { segments: [{ name: "a" }], totalSize: 5, batchSize: 20, offset: 0 };
+    const result = unwrapResponse(resp, "segments");
+    expect(result.responseBatchSize).toBe(20);
+    expect(result.totalSize).toBe(5);
+  });
+
+  it("omits responseBatchSize when API returns batchSize: 0", () => {
+    const resp = { activations: [], batchSize: 0, offset: 0 };
+    const result = unwrapResponse(resp, "activations");
+    expect(result.responseBatchSize).toBeUndefined();
+  });
+
+  it("omits responseBatchSize when not present", () => {
+    const resp = { dataModelObject: [{ name: "a" }] };
+    const result = unwrapResponse(resp, "dataModelObjects");
+    expect(result.responseBatchSize).toBeUndefined();
+  });
 });
