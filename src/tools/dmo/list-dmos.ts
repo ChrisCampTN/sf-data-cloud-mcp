@@ -21,11 +21,13 @@ export async function listDmosTool(
   input: ListDmosInput,
   auth: AuthManager,
   http: DataCloudHttpClient
-): Promise<DmoSummary[]> {
+): Promise<Record<string, unknown>[]> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  const response = await http.get<{ dataModelObjects: DmoSummary[] }>(
+  const result = await http.paginatedGet(
     `${orgCreds.instanceUrl}/services/data/v66.0/ssot/data-model-objects`,
-    orgCreds.accessToken
+    orgCreds.accessToken,
+    "dataModelObjects",
+    orgCreds.instanceUrl
   );
-  return response.dataModelObjects;
+  return result.items;
 }

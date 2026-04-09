@@ -10,7 +10,7 @@ describe("listActivationsTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ activations: [] })
+      paginatedGet: vi.fn().mockResolvedValue({ items: [] })
     };
 
     const result = await listActivationsTool(

@@ -11,7 +11,7 @@ describe("getCalculatedInsightStatusTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ calculatedInsights: rawFixture })
+      paginatedGet: vi.fn().mockResolvedValue({ items: rawFixture })
     };
 
     const result = await getCalculatedInsightStatusTool(
@@ -33,7 +33,7 @@ describe("getCalculatedInsightStatusTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ calculatedInsights: [] })
+      paginatedGet: vi.fn().mockResolvedValue({ items: [] })
     };
 
     await expect(

@@ -12,9 +12,11 @@ export async function listDataStreamsTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>[]> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  const response = await http.get<{ dataStreams: Record<string, unknown>[] }>(
+  const result = await http.paginatedGet(
     `${orgCreds.instanceUrl}/services/data/v66.0/ssot/data-streams`,
-    orgCreds.accessToken
+    orgCreds.accessToken,
+    "dataStreams",
+    orgCreds.instanceUrl
   );
-  return response.dataStreams;
+  return result.items;
 }

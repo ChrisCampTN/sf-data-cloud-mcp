@@ -11,7 +11,7 @@ describe("listTransformsTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ dataTransforms: fixture })
+      paginatedGet: vi.fn().mockResolvedValue({ items: fixture })
     };
 
     const result = await listTransformsTool(

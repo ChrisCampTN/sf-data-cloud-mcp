@@ -12,9 +12,11 @@ export async function listActivationTargetsTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>[]> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  const response = await http.get<{ activationTargets: Record<string, unknown>[] }>(
+  const result = await http.paginatedGet(
     `${orgCreds.instanceUrl}/services/data/v66.0/ssot/activation-targets`,
-    orgCreds.accessToken
+    orgCreds.accessToken,
+    "activationTargets",
+    orgCreds.instanceUrl
   );
-  return response.activationTargets;
+  return result.items;
 }

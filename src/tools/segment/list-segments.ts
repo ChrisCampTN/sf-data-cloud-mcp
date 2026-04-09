@@ -12,9 +12,11 @@ export async function listSegmentsTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>[]> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  const response = await http.get<{ segments: Record<string, unknown>[] }>(
+  const result = await http.paginatedGet(
     `${orgCreds.instanceUrl}/services/data/v66.0/ssot/segments`,
-    orgCreds.accessToken
+    orgCreds.accessToken,
+    "segments",
+    orgCreds.instanceUrl
   );
-  return response.segments;
+  return result.items;
 }

@@ -15,16 +15,18 @@ export async function listCalculatedInsightsTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>[]> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  const response = await http.get<{ calculatedInsights: Record<string, unknown>[] }>(
+  const result = await http.paginatedGet(
     `${orgCreds.instanceUrl}/services/data/v66.0/ssot/calculated-insights`,
-    orgCreds.accessToken
+    orgCreds.accessToken,
+    "calculatedInsights",
+    orgCreds.instanceUrl
   );
 
   if (input.raw) {
-    return response.calculatedInsights;
+    return result.items;
   }
 
-  return response.calculatedInsights.map(ci => ({
+  return result.items.map(ci => ({
     apiName: ci.apiName,
     displayName: ci.displayName,
     calculatedInsightStatus: ci.calculatedInsightStatus
