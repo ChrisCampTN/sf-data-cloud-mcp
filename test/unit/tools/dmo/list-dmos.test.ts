@@ -28,7 +28,8 @@ describe("listDmosTool", () => {
       expect.stringContaining("/ssot/data-model-objects"),
       "token",
       "dataModelObjects",
-      "https://test-org.my.salesforce.com"
+      "https://test-org.my.salesforce.com",
+      50 // hintBatchSize — DMO API returns max 50 with no pagination signals
     );
   });
 

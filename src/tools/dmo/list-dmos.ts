@@ -23,11 +23,14 @@ export async function listDmosTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>[]> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
+  // DMO API returns max 50 per page with no pagination signals (no totalSize,
+  // no batchSize, no nextPageUrl). Pass hintBatchSize so offset fallback works.
   const result = await http.paginatedGet(
     `${orgCreds.instanceUrl}/services/data/v66.0/ssot/data-model-objects`,
     orgCreds.accessToken,
     "dataModelObjects",
-    orgCreds.instanceUrl
+    orgCreds.instanceUrl,
+    50
   );
   return result.items;
 }

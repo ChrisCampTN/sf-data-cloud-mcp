@@ -43,18 +43,30 @@ export class DataCloudHttpClient {
   }
 
   /**
-   * Paginated GET — follows nextPageUrl to collect all items.
-   * Returns the combined unwrapped response.
+   * Paginated GET — follows nextPageUrl, nextPageToken, or offset to collect all items.
+   *
+   * Three pagination styles (tried in order):
+   * 1. nextPageUrl — follow the URL (data-streams, data-actions)
+   * 2. nextPageToken — collection pattern (calculated-insights)
+   * 3. Offset-based fallback — when the API returns no pagination signals
+   *    but totalSize indicates more items exist, or the page is full.
+   *    Page size detection priority: API response batchSize > caller hint > page item count.
+   *
+   * @param hintBatchSize - Caller-provided page size hint for APIs that return no
+   *   pagination signals at all (e.g. DMOs return a flat array capped at 50 with no
+   *   totalSize, batchSize, or nextPageUrl).
    */
   async paginatedGet(
     url: string,
     token: string,
     expectedKey: string,
-    baseUrl?: string
+    baseUrl?: string,
+    hintBatchSize?: number
   ): Promise<UnwrappedResponse> {
     const allItems: Record<string, unknown>[] = [];
     let currentUrl = url;
     let totalSize: number | undefined;
+    let effectiveBatchSize: number | undefined;
     let pages = 0;
 
     while (currentUrl && pages < this.maxPages) {
@@ -63,16 +75,32 @@ export class DataCloudHttpClient {
 
       allItems.push(...page.items);
       if (page.totalSize !== undefined) totalSize = page.totalSize;
+      if (page.responseBatchSize !== undefined) effectiveBatchSize = page.responseBatchSize;
+
+      // Resolve the page size: API response > caller hint > page length
+      const pageSize = effectiveBatchSize ?? hintBatchSize ?? page.items.length;
 
       if (page.nextPageUrl) {
-        // nextPageUrl may be relative (e.g. "/services/data/v66.0/ssot/...")
+        // Style 1: follow nextPageUrl (data-streams, data-actions)
         currentUrl = page.nextPageUrl.startsWith("http")
           ? page.nextPageUrl
           : `${baseUrl}${page.nextPageUrl}`;
       } else if (page.nextPageToken) {
-        // Token-based pagination (collection pattern)
+        // Style 2: token-based pagination (calculated-insights collection pattern)
         const sep = currentUrl.includes("?") ? "&" : "?";
         currentUrl = `${url}${sep}pageToken=${page.nextPageToken}`;
+      } else if (totalSize !== undefined && allItems.length < totalSize) {
+        // Offset fallback: API told us the total, we haven't reached it
+        const sep = url.includes("?") ? "&" : "?";
+        currentUrl = `${url}${sep}offset=${allItems.length}&batchSize=${pageSize}`;
+      } else if (
+        totalSize === undefined &&
+        page.items.length > 0 &&
+        page.items.length >= pageSize
+      ) {
+        // Offset fallback: no totalSize, page was full — assume more exist
+        const sep = url.includes("?") ? "&" : "?";
+        currentUrl = `${url}${sep}offset=${allItems.length}&batchSize=${pageSize}`;
       } else {
         break;
       }
