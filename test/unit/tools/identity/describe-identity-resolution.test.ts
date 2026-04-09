@@ -6,7 +6,7 @@ describe("describeIdentityResolutionTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("describeIdentityResolutionTool", () => {
     };
 
     const result = await describeIdentityResolutionTool(
-      { target_org: "HFA-Production", resolution_name: "Test" },
+      { target_org: "TestOrg", resolution_name: "Test" },
       mockAuth as any,
       mockHttp as any
     );

@@ -6,7 +6,7 @@ describe("getTransformStatusTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("getTransformStatusTool", () => {
     };
 
     const result = await getTransformStatusTool(
-      { target_org: "HFA-Production", transform_name: "Test" },
+      { target_org: "TestOrg", transform_name: "Test" },
       mockAuth as any,
       mockHttp as any
     );

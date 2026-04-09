@@ -1,5 +1,5 @@
 {
-  "table": "Billing_Account_c_00Df20000018YWM__dll",
+  "table": "Billing_Account_c_00Dxx0000000001__dll",
   "columns": [
     { "name": "KQ_Id__c", "type": "VARCHAR" },
     { "name": "Default_Processed_Date_c__c", "type": "DATE" },

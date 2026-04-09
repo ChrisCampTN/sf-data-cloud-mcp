@@ -13,7 +13,7 @@ describe("translateError", () => {
 
   it("translates DLO fact table error", () => {
     const msg =
-      "Error getting FactTable Billing_Account_c_00Df20000018YWM__dll";
+      "Error getting FactTable Billing_Account_c_00Dxx0000000001__dll";
     const result = translateError(msg);
     expect(result).toContain("__dlm");
     expect(result).toContain("resolve_field_names");

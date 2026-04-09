@@ -6,7 +6,7 @@ describe("searchHybridTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("searchHybridTool", () => {
     };
 
     await searchHybridTool(
-      { target_org: "HFA-Production", index_name: "TestIndex", query: "billing", limit: 5 },
+      { target_org: "TestOrg", index_name: "TestIndex", query: "billing", limit: 5 },
       mockAuth as any,
       mockHttp as any
     );

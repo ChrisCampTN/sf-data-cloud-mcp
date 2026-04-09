@@ -6,7 +6,7 @@ describe("describeSegmentTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("describeSegmentTool", () => {
     };
 
     const result = await describeSegmentTool(
-      { target_org: "HFA-Production", segment_name: "Test" },
+      { target_org: "TestOrg", segment_name: "Test" },
       mockAuth as any,
       mockHttp as any
     );

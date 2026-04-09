@@ -5,7 +5,7 @@ describe("createDmoMappingTool", () => {
   const mockAuth = {
     getOrgCredentials: vi.fn().mockResolvedValue({
       accessToken: "token",
-      instanceUrl: "https://hfaloan.my.salesforce.com"
+      instanceUrl: "https://test-org.my.salesforce.com"
     })
   };
 
@@ -18,7 +18,7 @@ describe("createDmoMappingTool", () => {
     };
 
     const result = await createDmoMappingTool(
-      { target_org: "HFA-Production", mapping, confirm: false },
+      { target_org: "TestOrg", mapping, confirm: false },
       mockAuth as any,
       mockHttp as any
     );
@@ -38,7 +38,7 @@ describe("createDmoMappingTool", () => {
     };
 
     const result = await createDmoMappingTool(
-      { target_org: "HFA-Production", mapping, confirm: true },
+      { target_org: "TestOrg", mapping, confirm: true },
       mockAuth as any,
       mockHttp as any
     );

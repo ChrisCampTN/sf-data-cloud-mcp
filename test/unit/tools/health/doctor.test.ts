@@ -6,12 +6,12 @@ describe("doctorTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com",
-        username: "chris@hfaloan.com"
+        instanceUrl: "https://test-org.my.salesforce.com",
+        username: "admin@test-org.com"
       }),
       getDataCloudCredentials: vi.fn().mockResolvedValue({
         accessToken: "dc-token",
-        instanceUrl: "https://hfaloan.dc.salesforce.com"
+        instanceUrl: "https://test-org.dc.salesforce.com"
       })
     };
     const mockHttp = {
@@ -21,16 +21,16 @@ describe("doctorTool", () => {
     };
 
     const result = await doctorTool(
-      { target_org: "HFA-Production" },
+      { target_org: "TestOrg" },
       mockAuth as any,
       mockHttp as any
     );
 
     expect(result.status).toBe("ok");
-    expect(result.org).toBe("chris@hfaloan.com");
+    expect(result.org).toBe("admin@test-org.com");
     expect(result.apiVersion).toBe("66.0");
     expect(result.indexes).toBe(3);
-    expect(result.instanceUrl).toBe("https://hfaloan.my.salesforce.com");
-    expect(result.dataCloudUrl).toBe("https://hfaloan.dc.salesforce.com");
+    expect(result.instanceUrl).toBe("https://test-org.my.salesforce.com");
+    expect(result.dataCloudUrl).toBe("https://test-org.dc.salesforce.com");
   });
 });

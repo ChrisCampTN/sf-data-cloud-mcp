@@ -6,11 +6,11 @@ describe("createDmoFromDloTool", () => {
   const mockAuth = {
     getOrgCredentials: vi.fn().mockResolvedValue({
       accessToken: "token",
-      instanceUrl: "https://hfaloan.my.salesforce.com"
+      instanceUrl: "https://test-org.my.salesforce.com"
     }),
     getDataCloudCredentials: vi.fn().mockResolvedValue({
       accessToken: "dc-token",
-      instanceUrl: "https://hfaloan.dc.salesforce.com"
+      instanceUrl: "https://test-org.dc.salesforce.com"
     })
   };
 
@@ -22,8 +22,8 @@ describe("createDmoFromDloTool", () => {
 
     const result = await createDmoFromDloTool(
       {
-        target_org: "HFA-Production",
-        dlo_name: "Billing_Account_c_00Df20000018YWM__dll",
+        target_org: "TestOrg",
+        dlo_name: "Billing_Account_c_00Dxx0000000001__dll",
         dmo_name: "PRA_BillingAccount__dlm",
         confirm: false
       },
@@ -45,8 +45,8 @@ describe("createDmoFromDloTool", () => {
 
     const result = await createDmoFromDloTool(
       {
-        target_org: "HFA-Production",
-        dlo_name: "Billing_Account_c_00Df20000018YWM__dll",
+        target_org: "TestOrg",
+        dlo_name: "Billing_Account_c_00Dxx0000000001__dll",
         dmo_name: "PRA_BillingAccount__dlm",
         confirm: true
       },
@@ -66,8 +66,8 @@ describe("createDmoFromDloTool", () => {
 
     const result = await createDmoFromDloTool(
       {
-        target_org: "HFA-Production",
-        dlo_name: "Billing_Account_c_00Df20000018YWM__dll",
+        target_org: "TestOrg",
+        dlo_name: "Billing_Account_c_00Dxx0000000001__dll",
         dmo_name: "PRA_BillingAccount__dlm",
         exclude_fields: ["cdp_sys_record_currency__c"],
         confirm: false

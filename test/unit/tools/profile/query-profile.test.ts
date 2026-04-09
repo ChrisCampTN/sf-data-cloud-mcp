@@ -6,7 +6,7 @@ describe("queryProfileTool", () => {
     const mockAuth = {
       getDataCloudCredentials: vi.fn().mockResolvedValue({
         accessToken: "dc-token",
-        instanceUrl: "https://hfaloan.dc.salesforce.com"
+        instanceUrl: "https://test-org.dc.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("queryProfileTool", () => {
     };
 
     const result = await queryProfileTool(
-      { target_org: "HFA-Production", profile_name: "UnifiedIndividual__dlm" },
+      { target_org: "TestOrg", profile_name: "UnifiedIndividual__dlm" },
       mockAuth as any,
       mockHttp as any
     );
@@ -30,7 +30,7 @@ describe("queryProfileTool", () => {
     const mockAuth = {
       getDataCloudCredentials: vi.fn().mockResolvedValue({
         accessToken: "dc-token",
-        instanceUrl: "https://hfaloan.dc.salesforce.com"
+        instanceUrl: "https://test-org.dc.salesforce.com"
       })
     };
     const mockHttp = {
@@ -38,7 +38,7 @@ describe("queryProfileTool", () => {
     };
 
     await queryProfileTool(
-      { target_org: "HFA-Production", profile_name: "UnifiedIndividual__dlm", filter: "Id='123'" },
+      { target_org: "TestOrg", profile_name: "UnifiedIndividual__dlm", filter: "Id='123'" },
       mockAuth as any,
       mockHttp as any
     );

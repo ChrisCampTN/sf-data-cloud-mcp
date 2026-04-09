@@ -16,7 +16,7 @@ describe("FieldResolver", () => {
       "https://instance.com"
     );
 
-    expect(dloName).toBe("Billing_Account_c_00Df20000018YWM__dll");
+    expect(dloName).toBe("Billing_Account_c_00Dxx0000000001__dll");
   });
 
   it("resolves DLO field to DMO field via mapping", async () => {
@@ -35,7 +35,7 @@ describe("FieldResolver", () => {
       "https://instance.com"
     );
 
-    expect(mapping.dlo).toBe("Billing_Account_c_00Df20000018YWM__dll");
+    expect(mapping.dlo).toBe("Billing_Account_c_00Dxx0000000001__dll");
     expect(mapping.dloField).toBe("Adjusted_Credit_Score_c__c");
     expect(mapping.dmo).toBe("PRA_BillingAccount__dlm");
     expect(mapping.dmoField).toBe("Adjusted_Credit_Score_c_c__c");

@@ -7,7 +7,7 @@ describe("listDmoMappingsTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -16,15 +16,15 @@ describe("listDmoMappingsTool", () => {
 
     const result = await listDmoMappingsTool(
       {
-        target_org: "HFA-Production",
-        dlo_name: "Billing_Account_c_00Df20000018YWM__dll",
+        target_org: "TestOrg",
+        dlo_name: "Billing_Account_c_00Dxx0000000001__dll",
         dmo_name: "PRA_BillingAccount__dlm"
       },
       mockAuth as any,
       mockHttp as any
     );
 
-    expect(result.sourceDlo).toBe("Billing_Account_c_00Df20000018YWM__dll");
+    expect(result.sourceDlo).toBe("Billing_Account_c_00Dxx0000000001__dll");
     expect(result.targetDmo).toBe("PRA_BillingAccount__dlm");
     expect(result.mappings).toHaveLength(16);
     expect(mockHttp.get).toHaveBeenCalledWith(

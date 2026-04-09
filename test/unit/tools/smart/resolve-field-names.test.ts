@@ -8,7 +8,7 @@ describe("resolveFieldNamesTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -16,20 +16,20 @@ describe("resolveFieldNamesTool", () => {
     };
 
     const result = await resolveFieldNamesTool(
-      { target_org: "HFA-Production", crm_object: "Billing_Account__c" },
+      { target_org: "TestOrg", crm_object: "Billing_Account__c" },
       mockAuth as any,
       mockHttp as any
     );
 
     expect(result.crm).toBe("Billing_Account__c");
-    expect(result.dlo).toBe("Billing_Account_c_00Df20000018YWM__dll");
+    expect(result.dlo).toBe("Billing_Account_c_00Dxx0000000001__dll");
   });
 
   it("resolves CRM field to DMO field", async () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -39,7 +39,7 @@ describe("resolveFieldNamesTool", () => {
     };
 
     const result = await resolveFieldNamesTool(
-      { target_org: "HFA-Production", crm_object: "Billing_Account__c", crm_field: "Adjusted_Credit_Score__c" },
+      { target_org: "TestOrg", crm_object: "Billing_Account__c", crm_field: "Adjusted_Credit_Score__c" },
       mockAuth as any,
       mockHttp as any
     );
