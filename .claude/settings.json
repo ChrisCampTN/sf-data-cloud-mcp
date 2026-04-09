@@ -1,0 +1,23 @@
+{
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "cd \"$PROJECT_DIR\" && npx tsc --noEmit --pretty 2>&1 | head -20",
+        "description": "Type-check after file edits"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "echo \"$TOOL_INPUT\" | node -e \"const d=require('fs').readFileSync('/dev/stdin','utf8');const blocked=['.env','credentials','.secret'];const fp=(JSON.parse(d).file_path||'').toLowerCase();if(blocked.some(b=>fp.includes(b))){console.error('BLOCKED: Cannot edit sensitive file: '+fp);process.exit(1)}\"",
+        "description": "Block edits to .env, credentials, and secrets"
+      }
+    ]
+  }
+}
