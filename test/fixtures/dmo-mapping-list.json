@@ -1,0 +1,47 @@
+{
+  "sourceDlo": "Billing_Account_c_00Df20000018YWM__dll",
+  "targetDmo": "PRA_BillingAccount__dlm",
+  "status": "ACTIVE",
+  "mappings": [
+    {
+      "sourceField": "Adjusted_Credit_Score_c__c",
+      "targetField": "Adjusted_Credit_Score_c_c__c"
+    },
+    { "sourceField": "Status_c__c", "targetField": "Status_c_c__c" },
+    { "sourceField": "Term_c__c", "targetField": "Term_c_c__c" },
+    { "sourceField": "Provider_c__c", "targetField": "Provider_c_c__c" },
+    { "sourceField": "Id__c", "targetField": "Id_c__c" },
+    { "sourceField": "Type_c__c", "targetField": "Type_c_c__c" },
+    {
+      "sourceField": "Default_Type_c__c",
+      "targetField": "Default_Type_c_c__c"
+    },
+    {
+      "sourceField": "Dispute_Lost_Default_c__c",
+      "targetField": "Dispute_Lost_Default_c_c__c"
+    },
+    {
+      "sourceField": "MadePayments_c__c",
+      "targetField": "MadePayments_c_c__c"
+    },
+    {
+      "sourceField": "Made_Recission_Payments_c__c",
+      "targetField": "Made_Recission_Payments_c_c__c"
+    },
+    {
+      "sourceField": "Required_Consecutive_Payments_c__c",
+      "targetField": "Required_Consecutive_Payments_c_c__c"
+    },
+    { "sourceField": "Name__c", "targetField": "Name_c__c" },
+    {
+      "sourceField": "Recission_Window_Type_c__c",
+      "targetField": "Recission_Window_Type_c_c__c"
+    },
+    { "sourceField": "DataSource__c", "targetField": "DataSource__c" },
+    {
+      "sourceField": "DataSourceObject__c",
+      "targetField": "DataSourceObject__c"
+    },
+    { "sourceField": "KQ_Id__c", "targetField": "KQ_Id_c__c" }
+  ]
+}

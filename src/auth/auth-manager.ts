@@ -1,0 +1,93 @@
+import { execSync } from "child_process";
+
+export interface OrgCredentials {
+  accessToken: string;
+  instanceUrl: string;
+  username: string;
+}
+
+export interface DataCloudCredentials {
+  accessToken: string;
+  instanceUrl: string;
+}
+
+export class AuthManager {
+  private orgCache = new Map<string, OrgCredentials>();
+  private dcCache = new Map<
+    string,
+    { creds: DataCloudCredentials; expiresAt: number }
+  >();
+
+  async getOrgCredentials(targetOrg: string): Promise<OrgCredentials> {
+    const cached = this.orgCache.get(targetOrg);
+    if (cached) return cached;
+
+    const output = execSync(`sf org display --target-org ${targetOrg} --json`, {
+      encoding: "utf-8",
+      timeout: 30000
+    });
+
+    const parsed = JSON.parse(output);
+    const result = parsed.result;
+
+    const creds: OrgCredentials = {
+      accessToken: result.accessToken,
+      instanceUrl: result.instanceUrl,
+      username: result.username
+    };
+
+    this.orgCache.set(targetOrg, creds);
+    return creds;
+  }
+
+  async getDataCloudCredentials(
+    targetOrg: string
+  ): Promise<DataCloudCredentials> {
+    const cached = this.dcCache.get(targetOrg);
+    if (cached && cached.expiresAt > Date.now()) return cached.creds;
+
+    const orgCreds = await this.getOrgCredentials(targetOrg);
+
+    const response = await fetch(
+      `${orgCreds.instanceUrl}/services/a360/token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${orgCreds.accessToken}`
+        },
+        body: "grant_type=urn:salesforce:grant-type:external:cdp"
+      }
+    );
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      throw new Error(
+        `Data Cloud token exchange failed: ${JSON.stringify(errorBody)}`
+      );
+    }
+
+    const tokenResponse = (await response.json()) as {
+      access_token: string;
+      instance_url: string;
+      token_type: string;
+    };
+
+    const creds: DataCloudCredentials = {
+      accessToken: tokenResponse.access_token,
+      instanceUrl: tokenResponse.instance_url
+    };
+
+    this.dcCache.set(targetOrg, {
+      creds,
+      expiresAt: Date.now() + 25 * 60 * 1000 // 25 min TTL (tokens expire ~30 min)
+    });
+
+    return creds;
+  }
+
+  clearCache(): void {
+    this.orgCache.clear();
+    this.dcCache.clear();
+  }
+}

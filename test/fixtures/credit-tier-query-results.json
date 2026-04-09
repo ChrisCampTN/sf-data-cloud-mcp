@@ -1,0 +1,33 @@
+{
+  "data": [
+    {
+      "TierName__c": "0-579",
+      "MinScore__c": 0,
+      "MaxScore__c": 579,
+      "Version__c": "2025-12",
+      "IsActive__c": true
+    },
+    {
+      "TierName__c": "580-619",
+      "MinScore__c": 580,
+      "MaxScore__c": 619,
+      "Version__c": "2025-12",
+      "IsActive__c": true
+    },
+    {
+      "TierName__c": "620-719",
+      "MinScore__c": 620,
+      "MaxScore__c": 719,
+      "Version__c": "2025-12",
+      "IsActive__c": true
+    },
+    {
+      "TierName__c": "720+",
+      "MinScore__c": 720,
+      "MaxScore__c": 850,
+      "Version__c": "2025-12",
+      "IsActive__c": true
+    }
+  ],
+  "metadata": { "rowCount": 4 }
+}

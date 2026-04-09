@@ -1,0 +1,4 @@
+{
+  "errorCode": "MAPPING_ERROR",
+  "message": "Unable to find Primary Key of DLO in POST request of Mapping Creation"
+}

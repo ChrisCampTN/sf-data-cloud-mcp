@@ -1,0 +1,56 @@
+{
+  "category": "OTHER",
+  "creationType": "Custom",
+  "dataSpaceName": "default",
+  "name": "PRA_CreditTierModels__dlm",
+  "fields": [
+    {
+      "name": "Version_c__c",
+      "type": "Text",
+      "label": "Version c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Key_c__c",
+      "type": "Text",
+      "label": "Key c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "MinScore_c__c",
+      "type": "Number",
+      "label": "MinScore c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "TierName_c__c",
+      "type": "Text",
+      "label": "TierName c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "MaxScore_c__c",
+      "type": "Number",
+      "label": "MaxScore c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "IsActive_c__c",
+      "type": "Checkbox",
+      "label": "IsActive c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "DataSource__c",
+      "type": "Text",
+      "label": "Data Source",
+      "creationType": "System"
+    },
+    {
+      "name": "DataSourceObject__c",
+      "type": "Text",
+      "label": "Data Source Object",
+      "creationType": "System"
+    }
+  ]
+}

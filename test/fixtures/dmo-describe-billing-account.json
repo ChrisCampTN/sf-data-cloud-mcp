@@ -1,0 +1,98 @@
+{
+  "category": "OTHER",
+  "creationType": "Custom",
+  "dataSpaceName": "default",
+  "name": "PRA_BillingAccount__dlm",
+  "fields": [
+    {
+      "name": "Adjusted_Credit_Score_c_c__c",
+      "type": "Number",
+      "label": "Adjusted Credit Score c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Status_c_c__c",
+      "type": "Text",
+      "label": "Status c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Term_c_c__c",
+      "type": "Number",
+      "label": "Term c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Provider_c_c__c",
+      "type": "Text",
+      "label": "Provider c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Id_c__c",
+      "type": "Text",
+      "label": "Id c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Type_c_c__c",
+      "type": "Text",
+      "label": "Type c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Default_Type_c_c__c",
+      "type": "Text",
+      "label": "Default Type c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Dispute_Lost_Default_c_c__c",
+      "type": "Checkbox",
+      "label": "Dispute Lost Default c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "MadePayments_c_c__c",
+      "type": "Number",
+      "label": "MadePayments c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Made_Recission_Payments_c_c__c",
+      "type": "Number",
+      "label": "Made Recission Payments c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Required_Consecutive_Payments_c_c__c",
+      "type": "Number",
+      "label": "Required Consecutive Payments c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Name_c__c",
+      "type": "Text",
+      "label": "Name c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "Recission_Window_Type_c_c__c",
+      "type": "Text",
+      "label": "Recission Window Type c",
+      "creationType": "Custom"
+    },
+    {
+      "name": "DataSource__c",
+      "type": "Text",
+      "label": "Data Source",
+      "creationType": "System"
+    },
+    {
+      "name": "DataSourceObject__c",
+      "type": "Text",
+      "label": "Data Source Object",
+      "creationType": "System"
+    }
+  ]
+}

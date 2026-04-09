@@ -1,0 +1,4 @@
+{
+  "errorCode": "MAPPING_ERROR",
+  "message": "Default_Processed_Date_c__c 's type Date is different from Default_Processed_Date_c_c__c 's type DateTime"
+}
