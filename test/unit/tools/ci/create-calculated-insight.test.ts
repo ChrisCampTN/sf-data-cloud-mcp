@@ -5,7 +5,7 @@ describe("createCalculatedInsightTool", () => {
   const mockAuth = {
     getOrgCredentials: vi.fn().mockResolvedValue({
       accessToken: "token",
-      instanceUrl: "https://hfaloan.my.salesforce.com"
+      instanceUrl: "https://test-org.my.salesforce.com"
     })
   };
 
@@ -18,7 +18,7 @@ describe("createCalculatedInsightTool", () => {
     };
 
     const result = await createCalculatedInsightTool(
-      { target_org: "HFA-Production", definition, confirm: false },
+      { target_org: "TestOrg", definition, confirm: false },
       mockAuth as any,
       mockHttp as any
     );
@@ -34,7 +34,7 @@ describe("createCalculatedInsightTool", () => {
 
     const result = await createCalculatedInsightTool(
       {
-        target_org: "HFA-Production",
+        target_org: "TestOrg",
         definition: { apiName: "Test__cio", expression: "SELECT 1", publishScheduleInterval: "6h" },
         confirm: true
       },
@@ -51,7 +51,7 @@ describe("createCalculatedInsightTool", () => {
 
     await createCalculatedInsightTool(
       {
-        target_org: "HFA-Production",
+        target_org: "TestOrg",
         definition: { apiName: "Test__cio", expression: "SELECT 1", publishScheduleInterval: "NotScheduled" },
         confirm: true
       },
@@ -68,7 +68,7 @@ describe("createCalculatedInsightTool", () => {
 
     await createCalculatedInsightTool(
       {
-        target_org: "HFA-Production",
+        target_org: "TestOrg",
         definition: { apiName: "Test__cio", expression: "SELECT 1" },
         confirm: true
       },

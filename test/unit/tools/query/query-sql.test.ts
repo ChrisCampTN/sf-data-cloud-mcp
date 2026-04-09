@@ -7,7 +7,7 @@ describe("querySqlTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -15,7 +15,7 @@ describe("querySqlTool", () => {
     };
 
     const result = await querySqlTool(
-      { target_org: "HFA-Production", sql: "SELECT * FROM credit_tier_models__dll" },
+      { target_org: "TestOrg", sql: "SELECT * FROM credit_tier_models__dll" },
       mockAuth as any,
       mockHttp as any
     );

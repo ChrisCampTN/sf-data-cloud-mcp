@@ -17,21 +17,21 @@ describe("AuthManager", () => {
         JSON.stringify({
           result: {
             accessToken: "org-token-123",
-            instanceUrl: "https://hfaloan.my.salesforce.com",
-            username: "chris@hfaloan.com"
+            instanceUrl: "https://test-org.my.salesforce.com",
+            username: "admin@test-org.com"
           }
         })
       )
     );
 
     const auth = new AuthManager();
-    const creds = await auth.getOrgCredentials("HFA-Production");
+    const creds = await auth.getOrgCredentials("TestOrg");
 
     expect(creds.accessToken).toBe("org-token-123");
-    expect(creds.instanceUrl).toBe("https://hfaloan.my.salesforce.com");
+    expect(creds.instanceUrl).toBe("https://test-org.my.salesforce.com");
     expect(vi.mocked(execSync)).toHaveBeenCalledWith(
       expect.stringContaining(
-        "sf org display --target-org HFA-Production --json"
+        "sf org display --target-org TestOrg --json"
       ),
       expect.any(Object)
     );
@@ -44,16 +44,16 @@ describe("AuthManager", () => {
         JSON.stringify({
           result: {
             accessToken: "org-token-123",
-            instanceUrl: "https://hfaloan.my.salesforce.com",
-            username: "chris@hfaloan.com"
+            instanceUrl: "https://test-org.my.salesforce.com",
+            username: "admin@test-org.com"
           }
         })
       )
     );
 
     const auth = new AuthManager();
-    await auth.getOrgCredentials("HFA-Production");
-    await auth.getOrgCredentials("HFA-Production");
+    await auth.getOrgCredentials("TestOrg");
+    await auth.getOrgCredentials("TestOrg");
 
     expect(vi.mocked(execSync)).toHaveBeenCalledTimes(1);
   });
@@ -65,8 +65,8 @@ describe("AuthManager", () => {
         JSON.stringify({
           result: {
             accessToken: "org-token-123",
-            instanceUrl: "https://hfaloan.my.salesforce.com",
-            username: "chris@hfaloan.com"
+            instanceUrl: "https://test-org.my.salesforce.com",
+            username: "admin@test-org.com"
           }
         })
       )
@@ -77,19 +77,19 @@ describe("AuthManager", () => {
       json: () =>
         Promise.resolve({
           access_token: "dc-token-456",
-          instance_url: "https://hfaloan.dc.salesforce.com",
+          instance_url: "https://test-org.dc.salesforce.com",
           token_type: "Bearer"
         })
     });
     vi.stubGlobal("fetch", mockFetch);
 
     const auth = new AuthManager();
-    const creds = await auth.getDataCloudCredentials("HFA-Production");
+    const creds = await auth.getDataCloudCredentials("TestOrg");
 
     expect(creds.accessToken).toBe("dc-token-456");
-    expect(creds.instanceUrl).toBe("https://hfaloan.dc.salesforce.com");
+    expect(creds.instanceUrl).toBe("https://test-org.dc.salesforce.com");
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://hfaloan.my.salesforce.com/services/a360/token",
+      "https://test-org.my.salesforce.com/services/a360/token",
       expect.objectContaining({ method: "POST" })
     );
   });

@@ -7,8 +7,8 @@ describe("listDmosTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com",
-        username: "chris@hfaloan.com"
+        instanceUrl: "https://test-org.my.salesforce.com",
+        username: "admin@test-org.com"
       })
     };
     const mockHttp = {
@@ -16,7 +16,7 @@ describe("listDmosTool", () => {
     };
 
     const result = await listDmosTool(
-      { target_org: "HFA-Production" },
+      { target_org: "TestOrg" },
       mockAuth as any,
       mockHttp as any
     );
@@ -34,8 +34,8 @@ describe("listDmosTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com",
-        username: "chris@hfaloan.com"
+        instanceUrl: "https://test-org.my.salesforce.com",
+        username: "admin@test-org.com"
       })
     };
     const mockHttp = {
@@ -43,7 +43,7 @@ describe("listDmosTool", () => {
     };
 
     await expect(
-      listDmosTool({ target_org: "HFA-Production" }, mockAuth as any, mockHttp as any)
+      listDmosTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any)
     ).rejects.toThrow("Network error");
   });
 });

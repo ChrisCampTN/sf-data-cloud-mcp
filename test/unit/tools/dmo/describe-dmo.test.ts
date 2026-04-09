@@ -7,8 +7,8 @@ describe("describeDmoTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com",
-        username: "chris@hfaloan.com"
+        instanceUrl: "https://test-org.my.salesforce.com",
+        username: "admin@test-org.com"
       })
     };
     const mockHttp = {
@@ -16,7 +16,7 @@ describe("describeDmoTool", () => {
     };
 
     const result = await describeDmoTool(
-      { target_org: "HFA-Production", dmo_name: "PRA_BillingAccount__dlm" },
+      { target_org: "TestOrg", dmo_name: "PRA_BillingAccount__dlm" },
       mockAuth as any,
       mockHttp as any
     );

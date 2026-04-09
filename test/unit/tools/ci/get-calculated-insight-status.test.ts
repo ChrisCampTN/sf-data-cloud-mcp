@@ -7,7 +7,7 @@ describe("getCalculatedInsightStatusTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -15,7 +15,7 @@ describe("getCalculatedInsightStatusTool", () => {
     };
 
     const result = await getCalculatedInsightStatusTool(
-      { target_org: "HFA-Production", ci_name: "PRA_Credit_Tier_Assignment__cio" },
+      { target_org: "TestOrg", ci_name: "PRA_Credit_Tier_Assignment__cio" },
       mockAuth as any,
       mockHttp as any
     );
@@ -29,7 +29,7 @@ describe("getCalculatedInsightStatusTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -38,7 +38,7 @@ describe("getCalculatedInsightStatusTool", () => {
 
     await expect(
       getCalculatedInsightStatusTool(
-        { target_org: "HFA-Production", ci_name: "NonExistent__cio" },
+        { target_org: "TestOrg", ci_name: "NonExistent__cio" },
         mockAuth as any,
         mockHttp as any
       )

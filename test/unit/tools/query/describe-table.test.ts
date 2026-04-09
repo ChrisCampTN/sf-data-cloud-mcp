@@ -6,7 +6,7 @@ describe("describeTableTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("describeTableTool", () => {
     };
 
     await describeTableTool(
-      { target_org: "HFA-Production", table: "credit_tier_models__dll" },
+      { target_org: "TestOrg", table: "credit_tier_models__dll" },
       mockAuth as any,
       mockHttp as any
     );

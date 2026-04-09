@@ -6,7 +6,7 @@ describe("listActivationsTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("listActivationsTool", () => {
     };
 
     const result = await listActivationsTool(
-      { target_org: "HFA-Production" },
+      { target_org: "TestOrg" },
       mockAuth as any,
       mockHttp as any
     );

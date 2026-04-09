@@ -4,7 +4,7 @@ import type { DataCloudHttpClient } from "../../util/http.js";
 
 export const createDmoFromDloInputSchema = z.object({
   target_org: z.string().describe("Salesforce org alias or username"),
-  dlo_name: z.string().describe("DLO table name (e.g. Billing_Account_c_00Df20000018YWM__dll)"),
+  dlo_name: z.string().describe("DLO table name (e.g. Billing_Account_c_00Dxx0000000001__dll)"),
   dmo_name: z.string().optional().describe("Target DMO name. Derived from DLO name if omitted."),
   category: z.string().optional().default("OTHER").describe("DMO category (default: OTHER)"),
   include_fields: z.array(z.string()).optional().describe("Only include these DLO fields"),

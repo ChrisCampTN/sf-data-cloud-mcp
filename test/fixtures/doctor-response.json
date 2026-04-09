@@ -1,7 +1,7 @@
 {
   "status": "ok",
-  "org": "chris@hfaloan.com",
+  "org": "admin@test-org.com",
   "apiVersion": "66.0",
   "indexes": 3,
-  "instanceUrl": "https://hfaloan.my.salesforce.com"
+  "instanceUrl": "https://test-org.my.salesforce.com"
 }

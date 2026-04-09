@@ -7,7 +7,7 @@ describe("listCalculatedInsightsTool", () => {
   const mockAuth = {
     getOrgCredentials: vi.fn().mockResolvedValue({
       accessToken: "token",
-      instanceUrl: "https://hfaloan.my.salesforce.com"
+      instanceUrl: "https://test-org.my.salesforce.com"
     })
   };
 
@@ -17,7 +17,7 @@ describe("listCalculatedInsightsTool", () => {
     };
 
     const result = await listCalculatedInsightsTool(
-      { target_org: "HFA-Production" },
+      { target_org: "TestOrg" },
       mockAuth as any,
       mockHttp as any
     );
@@ -34,7 +34,7 @@ describe("listCalculatedInsightsTool", () => {
     };
 
     const result = await listCalculatedInsightsTool(
-      { target_org: "HFA-Production", raw: true },
+      { target_org: "TestOrg", raw: true },
       mockAuth as any,
       mockHttp as any
     );

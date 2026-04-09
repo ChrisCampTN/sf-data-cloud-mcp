@@ -5,7 +5,7 @@ describe("deleteDmoTool", () => {
   const mockAuth = {
     getOrgCredentials: vi.fn().mockResolvedValue({
       accessToken: "token",
-      instanceUrl: "https://hfaloan.my.salesforce.com"
+      instanceUrl: "https://test-org.my.salesforce.com"
     })
   };
 
@@ -13,7 +13,7 @@ describe("deleteDmoTool", () => {
     const mockHttp = { delete: vi.fn() };
 
     const result = await deleteDmoTool(
-      { target_org: "HFA-Production", dmo_name: "Test__dlm", confirm: false },
+      { target_org: "TestOrg", dmo_name: "Test__dlm", confirm: false },
       mockAuth as any,
       mockHttp as any
     );
@@ -29,7 +29,7 @@ describe("deleteDmoTool", () => {
     };
 
     const result = await deleteDmoTool(
-      { target_org: "HFA-Production", dmo_name: "Test__dlm", confirm: true },
+      { target_org: "TestOrg", dmo_name: "Test__dlm", confirm: true },
       mockAuth as any,
       mockHttp as any
     );

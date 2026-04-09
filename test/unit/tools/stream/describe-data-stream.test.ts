@@ -6,7 +6,7 @@ describe("describeDataStreamTool", () => {
     const mockAuth = {
       getOrgCredentials: vi.fn().mockResolvedValue({
         accessToken: "token",
-        instanceUrl: "https://hfaloan.my.salesforce.com"
+        instanceUrl: "https://test-org.my.salesforce.com"
       })
     };
     const mockHttp = {
@@ -14,7 +14,7 @@ describe("describeDataStreamTool", () => {
     };
 
     const result = await describeDataStreamTool(
-      { target_org: "HFA-Production", stream_name: "TestStream" },
+      { target_org: "TestOrg", stream_name: "TestStream" },
       mockAuth as any,
       mockHttp as any
     );

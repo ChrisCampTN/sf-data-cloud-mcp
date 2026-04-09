@@ -5,14 +5,14 @@ describe("publishSegmentTool", () => {
   const mockAuth = {
     getOrgCredentials: vi.fn().mockResolvedValue({
       accessToken: "token",
-      instanceUrl: "https://hfaloan.my.salesforce.com"
+      instanceUrl: "https://test-org.my.salesforce.com"
     })
   };
 
   it("returns preview when confirm is false", async () => {
     const mockHttp = { post: vi.fn() };
     const result = await publishSegmentTool(
-      { target_org: "HFA-Production", segment_name: "Test", confirm: false },
+      { target_org: "TestOrg", segment_name: "Test", confirm: false },
       mockAuth as any,
       mockHttp as any
     );
@@ -22,7 +22,7 @@ describe("publishSegmentTool", () => {
   it("publishes segment when confirm is true", async () => {
     const mockHttp = { post: vi.fn().mockResolvedValue({ status: "PUBLISHING" }) };
     const result = await publishSegmentTool(
-      { target_org: "HFA-Production", segment_name: "Test", confirm: true },
+      { target_org: "TestOrg", segment_name: "Test", confirm: true },
       mockAuth as any,
       mockHttp as any
     );

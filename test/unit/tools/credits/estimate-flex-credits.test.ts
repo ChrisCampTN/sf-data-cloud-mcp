@@ -44,7 +44,7 @@ describe("estimateFlexCredits", () => {
     };
 
     const result = await estimateFlexCredits(
-      { mode: "live", target_org: "HFA-Production" },
+      { mode: "live", target_org: "TestOrg" },
       mockAuth as any,
       mockHttp as any
     );

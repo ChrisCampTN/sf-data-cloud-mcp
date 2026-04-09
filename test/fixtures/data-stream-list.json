@@ -1,7 +1,7 @@
 [
   {
-    "name": "Account_00Df20000018YWM",
-    "label": "Account_00Df20000018YWM",
+    "name": "Account_00Dxx0000000001",
+    "label": "Account_00Dxx0000000001",
     "status": "ACTIVE",
     "lastRunStatus": "SUCCESS",
     "connector": "SalesforceDotCom",
@@ -9,8 +9,8 @@
     "records": 150776
   },
   {
-    "name": "Balance_Sheet_Entry_c_00Df20000018YWM",
-    "label": "Balance_Sheet_Entry__c_00Df20000018YWM",
+    "name": "Balance_Sheet_Entry_c_00Dxx0000000001",
+    "label": "Balance_Sheet_Entry__c_00Dxx0000000001",
     "status": "ACTIVE",
     "lastRunStatus": "SUCCESS",
     "connector": "SalesforceDotCom",
@@ -18,8 +18,8 @@
     "records": 1132970
   },
   {
-    "name": "Billing_Account_c_00Df20000018YWM",
-    "label": "Billing_Account__c_00Df20000018YWM",
+    "name": "Billing_Account_c_00Dxx0000000001",
+    "label": "Billing_Account__c_00Dxx0000000001",
     "status": "ACTIVE",
     "lastRunStatus": "SUCCESS",
     "connector": "SalesforceDotCom",
@@ -27,8 +27,8 @@
     "records": 139481
   },
   {
-    "name": "Billing_Transaction_c_00Df20000018YWM",
-    "label": "Billing_Transaction__c_00Df20000018YWM",
+    "name": "Billing_Transaction_c_00Dxx0000000001",
+    "label": "Billing_Transaction__c_00Dxx0000000001",
     "status": "ACTIVE",
     "lastRunStatus": "SUCCESS",
     "connector": "SalesforceDotCom",
@@ -36,8 +36,8 @@
     "records": 1115517
   },
   {
-    "name": "BillingAccountStatusHist_00Df20000018YWM",
-    "label": "BillingAccountStatusHist_00Df20000018YWM",
+    "name": "BillingAccountStatusHist_00Dxx0000000001",
+    "label": "BillingAccountStatusHist_00Dxx0000000001",
     "status": "ACTIVE",
     "lastRunStatus": "SUCCESS",
     "connector": "SalesforceDotCom",

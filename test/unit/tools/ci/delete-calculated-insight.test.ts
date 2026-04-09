@@ -5,7 +5,7 @@ describe("deleteCalculatedInsightTool", () => {
   const mockAuth = {
     getOrgCredentials: vi.fn().mockResolvedValue({
       accessToken: "token",
-      instanceUrl: "https://hfaloan.my.salesforce.com"
+      instanceUrl: "https://test-org.my.salesforce.com"
     })
   };
 
@@ -13,7 +13,7 @@ describe("deleteCalculatedInsightTool", () => {
     const mockHttp = { delete: vi.fn() };
 
     const result = await deleteCalculatedInsightTool(
-      { target_org: "HFA-Production", ci_name: "Test__cio", confirm: false },
+      { target_org: "TestOrg", ci_name: "Test__cio", confirm: false },
       mockAuth as any,
       mockHttp as any
     );
@@ -28,7 +28,7 @@ describe("deleteCalculatedInsightTool", () => {
     };
 
     const result = await deleteCalculatedInsightTool(
-      { target_org: "HFA-Production", ci_name: "Test__cio", confirm: true },
+      { target_org: "TestOrg", ci_name: "Test__cio", confirm: true },
       mockAuth as any,
       mockHttp as any
     );
