@@ -5,8 +5,8 @@ import {
 } from "../../../src/smart/type-mapper.js";
 
 describe("correctDmoFieldType", () => {
-  it("corrects DATE to Date (not DateTime)", () => {
-    expect(correctDmoFieldType("DATE")).toBe("Date");
+  it("corrects DATE to DateTime (API quirk: avoids type mismatch)", () => {
+    expect(correctDmoFieldType("DATE")).toBe("DateTime");
   });
 
   it("keeps DECIMAL as Number", () => {

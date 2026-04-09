@@ -79,4 +79,39 @@ describe("createCalculatedInsightTool", () => {
     const postBody = mockHttp.post.mock.calls[0][2];
     expect(postBody.definitionType).toBe("CALCULATED_METRIC");
   });
+
+  it("warns when expression contains __dll references", async () => {
+    const mockHttp = { post: vi.fn() };
+
+    const result = await createCalculatedInsightTool(
+      {
+        target_org: "TestOrg",
+        definition: { apiName: "Test__cio", expression: "SELECT * FROM BillingAccount__dll" },
+        confirm: false
+      },
+      mockAuth as any,
+      mockHttp as any
+    );
+
+    expect(result.preview).toBe(true);
+    expect(result.warnings).toBeDefined();
+    expect((result.warnings as string[])[0]).toContain("__dll");
+  });
+
+  it("blocks creation when expression has __dll references", async () => {
+    const mockHttp = { post: vi.fn() };
+
+    const result = await createCalculatedInsightTool(
+      {
+        target_org: "TestOrg",
+        definition: { apiName: "Test__cio", expression: "SELECT * FROM BillingAccount__dll" },
+        confirm: true
+      },
+      mockAuth as any,
+      mockHttp as any
+    );
+
+    expect(result.error).toContain("__dll");
+    expect(mockHttp.post).not.toHaveBeenCalled();
+  });
 });
