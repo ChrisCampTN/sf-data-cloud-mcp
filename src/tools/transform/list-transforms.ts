@@ -12,9 +12,11 @@ export async function listTransformsTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>[]> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  const response = await http.get<{ dataTransforms: Record<string, unknown>[] }>(
+  const result = await http.paginatedGet(
     `${orgCreds.instanceUrl}/services/data/v66.0/ssot/data-transforms`,
-    orgCreds.accessToken
+    orgCreds.accessToken,
+    "dataTransforms",
+    orgCreds.instanceUrl
   );
-  return response.dataTransforms;
+  return result.items;
 }

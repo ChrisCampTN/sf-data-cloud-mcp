@@ -11,7 +11,7 @@ describe("listSegmentsTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ segments: fixture })
+      paginatedGet: vi.fn().mockResolvedValue({ items: fixture })
     };
 
     const result = await listSegmentsTool(

@@ -10,7 +10,7 @@ describe("listDataActionsTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ dataActions: [] })
+      paginatedGet: vi.fn().mockResolvedValue({ items: [] })
     };
 
     const result = await listDataActionsTool(

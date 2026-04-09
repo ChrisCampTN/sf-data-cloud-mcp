@@ -13,7 +13,7 @@ describe("listCalculatedInsightsTool", () => {
 
   it("returns simplified CI list", async () => {
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ calculatedInsights: rawFixture })
+      paginatedGet: vi.fn().mockResolvedValue({ items: rawFixture, totalSize: rawFixture.length })
     };
 
     const result = await listCalculatedInsightsTool(
@@ -30,7 +30,7 @@ describe("listCalculatedInsightsTool", () => {
 
   it("returns full details when raw is true", async () => {
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ calculatedInsights: rawFixture })
+      paginatedGet: vi.fn().mockResolvedValue({ items: rawFixture, totalSize: rawFixture.length })
     };
 
     const result = await listCalculatedInsightsTool(

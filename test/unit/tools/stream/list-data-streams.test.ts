@@ -11,7 +11,7 @@ describe("listDataStreamsTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ dataStreams: fixture })
+      paginatedGet: vi.fn().mockResolvedValue({ items: fixture })
     };
 
     const result = await listDataStreamsTool(
