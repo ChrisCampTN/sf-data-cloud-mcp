@@ -2,7 +2,8 @@ const DLO_TO_DMO_TYPE_MAP: Record<string, string> = {
   VARCHAR: "Text",
   DECIMAL: "Number",
   BOOLEAN: "Checkbox",
-  DATE: "Date",
+  DATE: "DateTime",                  // API quirk: Date → DateTime to avoid type mismatch
+  TIMESTAMP: "DateTime",
   "TIMESTAMP WITH TIME ZONE": "DateTime",
   INTEGER: "Number",
   BIGINT: "Number"

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { AuthManager } from "../../auth/auth-manager.js";
 import type { DataCloudHttpClient } from "../../util/http.js";
+import { correctDmoFieldType } from "../../smart/type-mapper.js";
 
 export const createDmoFromDloInputSchema = z.object({
   target_org: z.string().describe("Salesforce org alias or username"),
@@ -14,26 +15,13 @@ export const createDmoFromDloInputSchema = z.object({
 
 export type CreateDmoFromDloInput = z.infer<typeof createDmoFromDloInputSchema>;
 
-// DLO type → DMO type mapping (corrects known mismatches)
-const DLO_TO_DMO_TYPE: Record<string, string> = {
-  VARCHAR: "Text",
-  DECIMAL: "Number",
-  BOOLEAN: "Checkbox",
-  DATE: "DateTime",       // Date → DateTime to avoid API mismatch
-  TIMESTAMP: "DateTime",
-  INTEGER: "Number",
-  BIGINT: "Number"
-};
-
 function dloFieldToDmoField(dloField: { name: string; type: string }): { name: string; type: string } {
   // Custom fields get doubled suffix: Field__c → Field_c__c
   const dmoFieldName = dloField.name.endsWith("__c")
     ? dloField.name.replace(/__c$/, "_c__c")
     : dloField.name;
 
-  const dmoType = DLO_TO_DMO_TYPE[dloField.type] ?? "Text";
-
-  return { name: dmoFieldName, type: dmoType };
+  return { name: dmoFieldName, type: correctDmoFieldType(dloField.type) };
 }
 
 export async function createDmoFromDloTool(

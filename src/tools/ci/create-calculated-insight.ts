@@ -25,8 +25,14 @@ export const createCalculatedInsightInputSchema = z.object({
 
 export type CreateCalculatedInsightInput = z.infer<typeof createCalculatedInsightInputSchema>;
 
-function enhanceDefinition(definition: Record<string, unknown>): Record<string, unknown> {
+interface EnhanceResult {
+  definition: Record<string, unknown>;
+  warnings: string[];
+}
+
+function enhanceDefinition(definition: Record<string, unknown>): EnhanceResult {
   const enhanced = { ...definition };
+  const warnings: string[] = [];
 
   // Auto-add definitionType
   if (!enhanced.definitionType) {
@@ -41,7 +47,15 @@ function enhanceDefinition(definition: Record<string, unknown>): Record<string, 
     }
   }
 
-  return enhanced;
+  // Warn if expression references DLO tables (__dll) — CIs require DMO tables (__dlm)
+  if (typeof enhanced.expression === "string" && enhanced.expression.includes("__dll")) {
+    warnings.push(
+      "Expression contains __dll (DLO) table references. CIs require __dlm (DMO) references. " +
+      "Use resolve_field_names to find the correct DMO table names, or use the sql_translator smart layer."
+    );
+  }
+
+  return { definition: enhanced, warnings };
 }
 
 export async function createCalculatedInsightTool(
@@ -49,10 +63,17 @@ export async function createCalculatedInsightTool(
   auth: AuthManager,
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>> {
-  const enhanced = enhanceDefinition(input.definition);
+  const { definition: enhanced, warnings } = enhanceDefinition(input.definition);
 
   if (!input.confirm) {
-    return { preview: true, definition: enhanced, message: "Set confirm: true to create this CI." };
+    const preview: Record<string, unknown> = { preview: true, definition: enhanced, message: "Set confirm: true to create this CI." };
+    if (warnings.length > 0) preview.warnings = warnings;
+    return preview;
+  }
+
+  // Block creation if expression has DLO references — they'll fail at runtime
+  if (warnings.length > 0 && typeof enhanced.expression === "string" && enhanced.expression.includes("__dll")) {
+    return { error: "Cannot create CI with __dll references in expression. CIs require __dlm (DMO) table names.", warnings };
   }
 
   const orgCreds = await auth.getOrgCredentials(input.target_org);

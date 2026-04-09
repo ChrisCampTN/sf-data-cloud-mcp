@@ -66,6 +66,30 @@ import { estimateFlexCredits, estimateFlexCreditsInputSchema } from "./tools/cre
 // Smart
 import { resolveFieldNamesTool, resolveFieldNamesInputSchema } from "./tools/smart/resolve-field-names.js";
 
+// Parse CLI args: --orgs ALLOW_ALL_ORGS | --orgs org1,org2
+function parseAllowedOrgs(): Set<string> | "ALL" {
+  const args = process.argv.slice(2);
+  const orgsIdx = args.indexOf("--orgs");
+  if (orgsIdx === -1 || orgsIdx + 1 >= args.length) {
+    return new Set(); // no --orgs flag = no orgs allowed
+  }
+  const value = args[orgsIdx + 1];
+  if (value === "ALLOW_ALL_ORGS") return "ALL";
+  return new Set(value.split(",").map(s => s.trim()).filter(Boolean));
+}
+
+const allowedOrgs = parseAllowedOrgs();
+
+function validateOrg(targetOrg: string): void {
+  if (allowedOrgs === "ALL") return;
+  if (allowedOrgs.size === 0) {
+    throw new Error("No orgs allowed. Start with --orgs ALLOW_ALL_ORGS or --orgs org1,org2");
+  }
+  if (!allowedOrgs.has(targetOrg)) {
+    throw new Error(`Org "${targetOrg}" is not in the allowed list: ${[...allowedOrgs].join(", ")}`);
+  }
+}
+
 const server = new McpServer({
   name: "sf-data-cloud-mcp",
   version: "0.1.0"
@@ -91,6 +115,7 @@ function toolError(error: unknown) {
 function safeTool(fn: (params: any) => Promise<unknown>) {
   return async (params: any) => {
     try {
+      if (params.target_org) validateOrg(params.target_org);
       return toolResult(await fn(params));
     } catch (e) {
       return toolError(e);
