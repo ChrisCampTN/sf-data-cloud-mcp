@@ -12,7 +12,7 @@ describe("listDmosTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockResolvedValue({ dataModelObjects: fixture })
+      paginatedGet: vi.fn().mockResolvedValue({ items: fixture, totalSize: fixture.length })
     };
 
     const result = await listDmosTool(
@@ -24,9 +24,11 @@ describe("listDmosTool", () => {
     expect(result).toHaveLength(3);
     expect(result[0].name).toBe("ssot__Account__dlm");
     expect(result[0].category).toBe("PROFILE");
-    expect(mockHttp.get).toHaveBeenCalledWith(
+    expect(mockHttp.paginatedGet).toHaveBeenCalledWith(
       expect.stringContaining("/ssot/data-model-objects"),
-      "token"
+      "token",
+      "dataModelObjects",
+      "https://test-org.my.salesforce.com"
     );
   });
 
@@ -39,7 +41,7 @@ describe("listDmosTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn().mockRejectedValue(new Error("Network error"))
+      paginatedGet: vi.fn().mockRejectedValue(new Error("Network error"))
     };
 
     await expect(

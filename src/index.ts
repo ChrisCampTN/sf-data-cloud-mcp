@@ -80,158 +80,141 @@ function toolResult(result: unknown) {
   };
 }
 
+function toolError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return {
+    content: [{ type: "text" as const, text: JSON.stringify({ error: message }, null, 2) }],
+    isError: true as const
+  };
+}
+
+function safeTool(fn: (params: any) => Promise<unknown>) {
+  return async (params: any) => {
+    try {
+      return toolResult(await fn(params));
+    } catch (e) {
+      return toolError(e);
+    }
+  };
+}
+
 // Health
-server.tool("doctor", "Check Data Cloud connectivity and health", doctorInputSchema.shape, async (params) => {
-  return toolResult(await doctorTool(params as any, auth, http));
-});
+server.tool("doctor", "Check Data Cloud connectivity and health", doctorInputSchema.shape,
+  safeTool((p) => doctorTool(p, auth, http)));
 
 // DMO tools
-server.tool("list_dmos", "List all Data Model Objects", listDmosInputSchema.shape, async (params) => {
-  return toolResult(await listDmosTool(params as any, auth, http));
-});
+server.tool("list_dmos", "List all Data Model Objects", listDmosInputSchema.shape,
+  safeTool((p) => listDmosTool(p, auth, http)));
 
-server.tool("describe_dmo", "Describe a DMO with its fields", describeDmoInputSchema.shape, async (params) => {
-  return toolResult(await describeDmoTool(params as any, auth, http));
-});
+server.tool("describe_dmo", "Describe a DMO with its fields", describeDmoInputSchema.shape,
+  safeTool((p) => describeDmoTool(p, auth, http)));
 
-server.tool("create_dmo", "Create a new Data Model Object", createDmoInputSchema.shape, async (params) => {
-  return toolResult(await createDmoTool(params as any, auth, http));
-});
+server.tool("create_dmo", "Create a new Data Model Object", createDmoInputSchema.shape,
+  safeTool((p) => createDmoTool(p, auth, http)));
 
-server.tool("create_dmo_from_dlo", "Create DMO from DLO with auto type correction and mapping", createDmoFromDloInputSchema.shape, async (params) => {
-  return toolResult(await createDmoFromDloTool(params as any, auth, http));
-});
+server.tool("create_dmo_from_dlo", "Create DMO from DLO with auto type correction and mapping", createDmoFromDloInputSchema.shape,
+  safeTool((p) => createDmoFromDloTool(p, auth, http)));
 
-server.tool("delete_dmo", "Delete a Data Model Object", deleteDmoInputSchema.shape, async (params) => {
-  return toolResult(await deleteDmoTool(params as any, auth, http));
-});
+server.tool("delete_dmo", "Delete a Data Model Object", deleteDmoInputSchema.shape,
+  safeTool((p) => deleteDmoTool(p, auth, http)));
 
-server.tool("list_dmo_mappings", "List field mappings between DLO and DMO", listDmoMappingsInputSchema.shape, async (params) => {
-  return toolResult(await listDmoMappingsTool(params as any, auth, http));
-});
+server.tool("list_dmo_mappings", "List field mappings between DLO and DMO", listDmoMappingsInputSchema.shape,
+  safeTool((p) => listDmoMappingsTool(p, auth, http)));
 
-server.tool("create_dmo_mapping", "Create field mapping between DLO and DMO", createDmoMappingInputSchema.shape, async (params) => {
-  return toolResult(await createDmoMappingTool(params as any, auth, http));
-});
+server.tool("create_dmo_mapping", "Create field mapping between DLO and DMO", createDmoMappingInputSchema.shape,
+  safeTool((p) => createDmoMappingTool(p, auth, http)));
 
 // Calculated Insight tools
-server.tool("list_calculated_insights", "List all Calculated Insights", listCalculatedInsightsInputSchema.shape, async (params) => {
-  return toolResult(await listCalculatedInsightsTool(params as any, auth, http));
-});
+server.tool("list_calculated_insights", "List all Calculated Insights", listCalculatedInsightsInputSchema.shape,
+  safeTool((p) => listCalculatedInsightsTool(p, auth, http)));
 
-server.tool("create_calculated_insight", "Create a Calculated Insight with smart schedule translation", createCalculatedInsightInputSchema.shape, async (params) => {
-  return toolResult(await createCalculatedInsightTool(params as any, auth, http));
-});
+server.tool("create_calculated_insight", "Create a Calculated Insight with smart schedule translation", createCalculatedInsightInputSchema.shape,
+  safeTool((p) => createCalculatedInsightTool(p, auth, http)));
 
-server.tool("run_calculated_insight", "Trigger a Calculated Insight run", runCalculatedInsightInputSchema.shape, async (params) => {
-  return toolResult(await runCalculatedInsightTool(params as any, auth, http));
-});
+server.tool("run_calculated_insight", "Trigger a Calculated Insight run", runCalculatedInsightInputSchema.shape,
+  safeTool((p) => runCalculatedInsightTool(p, auth, http)));
 
-server.tool("get_calculated_insight_status", "Get status of a Calculated Insight", getCalculatedInsightStatusInputSchema.shape, async (params) => {
-  return toolResult(await getCalculatedInsightStatusTool(params as any, auth, http));
-});
+server.tool("get_calculated_insight_status", "Get status of a Calculated Insight", getCalculatedInsightStatusInputSchema.shape,
+  safeTool((p) => getCalculatedInsightStatusTool(p, auth, http)));
 
-server.tool("delete_calculated_insight", "Delete a Calculated Insight", deleteCalculatedInsightInputSchema.shape, async (params) => {
-  return toolResult(await deleteCalculatedInsightTool(params as any, auth, http));
-});
+server.tool("delete_calculated_insight", "Delete a Calculated Insight", deleteCalculatedInsightInputSchema.shape,
+  safeTool((p) => deleteCalculatedInsightTool(p, auth, http)));
 
 // Query tools
-server.tool("query_sql", "Execute SQL query against Data Cloud", querySqlInputSchema.shape, async (params) => {
-  return toolResult(await querySqlTool(params as any, auth, http));
-});
+server.tool("query_sql", "Execute SQL query against Data Cloud", querySqlInputSchema.shape,
+  safeTool((p) => querySqlTool(p, auth, http)));
 
-server.tool("describe_table", "Describe table columns via LIMIT 0 query", describeTableInputSchema.shape, async (params) => {
-  return toolResult(await describeTableTool(params as any, auth, http));
-});
+server.tool("describe_table", "Describe table columns via LIMIT 0 query", describeTableInputSchema.shape,
+  safeTool((p) => describeTableTool(p, auth, http)));
 
-server.tool("search_vector", "Vector similarity search on a search index", searchVectorInputSchema.shape, async (params) => {
-  return toolResult(await searchVectorTool(params as any, auth, http));
-});
+server.tool("search_vector", "Vector similarity search on a search index", searchVectorInputSchema.shape,
+  safeTool((p) => searchVectorTool(p, auth, http)));
 
-server.tool("search_hybrid", "Hybrid keyword+vector search on a search index", searchHybridInputSchema.shape, async (params) => {
-  return toolResult(await searchHybridTool(params as any, auth, http));
-});
+server.tool("search_hybrid", "Hybrid keyword+vector search on a search index", searchHybridInputSchema.shape,
+  safeTool((p) => searchHybridTool(p, auth, http)));
 
 // Data Stream tools
-server.tool("list_data_streams", "List all data streams", listDataStreamsInputSchema.shape, async (params) => {
-  return toolResult(await listDataStreamsTool(params as any, auth, http));
-});
+server.tool("list_data_streams", "List all data streams", listDataStreamsInputSchema.shape,
+  safeTool((p) => listDataStreamsTool(p, auth, http)));
 
-server.tool("describe_data_stream", "Describe a data stream", describeDataStreamInputSchema.shape, async (params) => {
-  return toolResult(await describeDataStreamTool(params as any, auth, http));
-});
+server.tool("describe_data_stream", "Describe a data stream", describeDataStreamInputSchema.shape,
+  safeTool((p) => describeDataStreamTool(p, auth, http)));
 
-server.tool("create_data_stream", "Create a new data stream", createDataStreamInputSchema.shape, async (params) => {
-  return toolResult(await createDataStreamTool(params as any, auth, http));
-});
+server.tool("create_data_stream", "Create a new data stream", createDataStreamInputSchema.shape,
+  safeTool((p) => createDataStreamTool(p, auth, http)));
 
 // Transform tools
-server.tool("list_transforms", "List all data transforms", listTransformsInputSchema.shape, async (params) => {
-  return toolResult(await listTransformsTool(params as any, auth, http));
-});
+server.tool("list_transforms", "List all data transforms", listTransformsInputSchema.shape,
+  safeTool((p) => listTransformsTool(p, auth, http)));
 
-server.tool("run_transform", "Run a data transform", runTransformInputSchema.shape, async (params) => {
-  return toolResult(await runTransformTool(params as any, auth, http));
-});
+server.tool("run_transform", "Run a data transform", runTransformInputSchema.shape,
+  safeTool((p) => runTransformTool(p, auth, http)));
 
-server.tool("get_transform_status", "Get status of a data transform", getTransformStatusInputSchema.shape, async (params) => {
-  return toolResult(await getTransformStatusTool(params as any, auth, http));
-});
+server.tool("get_transform_status", "Get status of a data transform", getTransformStatusInputSchema.shape,
+  safeTool((p) => getTransformStatusTool(p, auth, http)));
 
 // Identity Resolution tools
-server.tool("list_identity_resolutions", "List all identity resolution rulesets", listIdentityResolutionsInputSchema.shape, async (params) => {
-  return toolResult(await listIdentityResolutionsTool(params as any, auth, http));
-});
+server.tool("list_identity_resolutions", "List all identity resolution rulesets", listIdentityResolutionsInputSchema.shape,
+  safeTool((p) => listIdentityResolutionsTool(p, auth, http)));
 
-server.tool("describe_identity_resolution", "Describe an identity resolution ruleset", describeIdentityResolutionInputSchema.shape, async (params) => {
-  return toolResult(await describeIdentityResolutionTool(params as any, auth, http));
-});
+server.tool("describe_identity_resolution", "Describe an identity resolution ruleset", describeIdentityResolutionInputSchema.shape,
+  safeTool((p) => describeIdentityResolutionTool(p, auth, http)));
 
 // Segment tools
-server.tool("list_segments", "List all segments", listSegmentsInputSchema.shape, async (params) => {
-  return toolResult(await listSegmentsTool(params as any, auth, http));
-});
+server.tool("list_segments", "List all segments", listSegmentsInputSchema.shape,
+  safeTool((p) => listSegmentsTool(p, auth, http)));
 
-server.tool("describe_segment", "Describe a segment", describeSegmentInputSchema.shape, async (params) => {
-  return toolResult(await describeSegmentTool(params as any, auth, http));
-});
+server.tool("describe_segment", "Describe a segment", describeSegmentInputSchema.shape,
+  safeTool((p) => describeSegmentTool(p, auth, http)));
 
-server.tool("publish_segment", "Publish a segment", publishSegmentInputSchema.shape, async (params) => {
-  return toolResult(await publishSegmentTool(params as any, auth, http));
-});
+server.tool("publish_segment", "Publish a segment", publishSegmentInputSchema.shape,
+  safeTool((p) => publishSegmentTool(p, auth, http)));
 
 // Activation tools
-server.tool("list_activations", "List all activations", listActivationsInputSchema.shape, async (params) => {
-  return toolResult(await listActivationsTool(params as any, auth, http));
-});
+server.tool("list_activations", "List all activations", listActivationsInputSchema.shape,
+  safeTool((p) => listActivationsTool(p, auth, http)));
 
-server.tool("list_activation_targets", "List all activation targets", listActivationTargetsInputSchema.shape, async (params) => {
-  return toolResult(await listActivationTargetsTool(params as any, auth, http));
-});
+server.tool("list_activation_targets", "List all activation targets", listActivationTargetsInputSchema.shape,
+  safeTool((p) => listActivationTargetsTool(p, auth, http)));
 
-server.tool("create_activation", "Create a new activation", createActivationInputSchema.shape, async (params) => {
-  return toolResult(await createActivationTool(params as any, auth, http));
-});
+server.tool("create_activation", "Create a new activation", createActivationInputSchema.shape,
+  safeTool((p) => createActivationTool(p, auth, http)));
 
 // Data Action tools
-server.tool("list_data_actions", "List all data actions", listDataActionsInputSchema.shape, async (params) => {
-  return toolResult(await listDataActionsTool(params as any, auth, http));
-});
+server.tool("list_data_actions", "List all data actions", listDataActionsInputSchema.shape,
+  safeTool((p) => listDataActionsTool(p, auth, http)));
 
 // Profile tools
-server.tool("query_profile", "Query unified profiles using Data Cloud token", queryProfileInputSchema.shape, async (params) => {
-  return toolResult(await queryProfileTool(params as any, auth, http));
-});
+server.tool("query_profile", "Query unified profiles using Data Cloud token", queryProfileInputSchema.shape,
+  safeTool((p) => queryProfileTool(p, auth, http)));
 
 // Credit tools
-server.tool("estimate_flex_credits", "Estimate or query live flex credit usage", estimateFlexCreditsInputSchema.shape, async (params) => {
-  return toolResult(await estimateFlexCredits(params as any, auth, http));
-});
+server.tool("estimate_flex_credits", "Estimate or query live flex credit usage", estimateFlexCreditsInputSchema.shape,
+  safeTool((p) => estimateFlexCredits(p, auth, http)));
 
 // Smart tools
-server.tool("resolve_field_names", "Resolve CRM object/field names to DLO/DMO names", resolveFieldNamesInputSchema.shape, async (params) => {
-  return toolResult(await resolveFieldNamesTool(params as any, auth, http));
-});
+server.tool("resolve_field_names", "Resolve CRM object/field names to DLO/DMO names", resolveFieldNamesInputSchema.shape,
+  safeTool((p) => resolveFieldNamesTool(p, auth, http)));
 
 async function main() {
   const transport = new StdioServerTransport();

@@ -26,16 +26,22 @@ export async function doctorTool(
   const orgCreds = await auth.getOrgCredentials(input.target_org);
   const dcCreds = await auth.getDataCloudCredentials(input.target_org);
 
-  const searchIndexes = await http.get<{ searchIndexes: unknown[] }>(
-    `${orgCreds.instanceUrl}/services/data/v66.0/ssot/search-indexes`,
-    orgCreds.accessToken
-  );
+  let indexes = 0;
+  try {
+    const searchIndexes = await http.get<{ searchIndexes?: unknown[] }>(
+      `${orgCreds.instanceUrl}/services/data/v66.0/ssot/search-indexes`,
+      orgCreds.accessToken
+    );
+    indexes = searchIndexes.searchIndexes?.length ?? 0;
+  } catch {
+    // search-indexes endpoint may not be available on all orgs
+  }
 
   return {
     status: "ok",
     org: orgCreds.username,
     apiVersion: "66.0",
-    indexes: searchIndexes.searchIndexes?.length ?? 0,
+    indexes,
     instanceUrl: orgCreds.instanceUrl,
     dataCloudUrl: dcCreds.instanceUrl
   };

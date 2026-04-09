@@ -46,6 +46,13 @@ export class AuthManager {
     const cached = this.dcCache.get(targetOrg);
     if (cached && cached.expiresAt > Date.now()) return cached.creds;
 
+    return this.exchangeDcToken(targetOrg, false);
+  }
+
+  private async exchangeDcToken(
+    targetOrg: string,
+    isRetry: boolean
+  ): Promise<DataCloudCredentials> {
     const orgCreds = await this.getOrgCredentials(targetOrg);
 
     const response = await fetch(
@@ -61,7 +68,14 @@ export class AuthManager {
     );
 
     if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({}));
+      const errorBody = await response.json().catch(() => ({})) as Record<string, unknown>;
+
+      // If "invalid subject token" and we haven't retried, the org token may be stale
+      if (!isRetry && String(errorBody.error_description ?? "").includes("invalid subject token")) {
+        this.orgCache.delete(targetOrg);
+        return this.exchangeDcToken(targetOrg, true);
+      }
+
       throw new Error(
         `Data Cloud token exchange failed: ${JSON.stringify(errorBody)}`
       );
