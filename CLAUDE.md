@@ -4,11 +4,9 @@
 
 `@chriscamp/sf-data-cloud-mcp` — A Node.js MCP server for Salesforce Data Cloud operations. Provides 35 tools covering DMOs, calculated insights, transforms, data streams, queries, segments, activations, profiles, and health checks with a smart enhancement layer.
 
-## Implementation Plan
+## Development Approach
 
-**Follow the implementation plan exactly:** `docs/plans/2026-04-08-data-cloud-mcp-server-plan.md`
-
-Execute tasks in order, one at a time. Each task uses TDD — write the test first, verify it fails, implement, verify it passes, commit. Do not skip tasks or reorder.
+TDD — write the test first, verify it fails, implement, verify it passes, commit. Do not skip tasks or reorder.
 
 ## Architecture
 
@@ -35,7 +33,7 @@ Execute tasks in order, one at a time. Each task uses TDD — write the test fir
 
 - **Framework:** Vitest
 - **All tests are mock-based** — no live org calls during automated testing
-- **Fixtures** in `test/fixtures/` are real API responses captured from HFA-Production on 2026-04-08
+- **Fixtures** in `test/fixtures/` are real API response shapes captured on 2026-04-08
 - Every tool gets a test file in `test/unit/`
 - Smart layer modules get dedicated tests
 - Error translator gets a test per known pattern
