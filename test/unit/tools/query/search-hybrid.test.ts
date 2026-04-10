@@ -19,10 +19,9 @@ describe("searchHybridTool", () => {
       mockHttp as any
     );
 
-    expect(mockHttp.post).toHaveBeenCalledWith(
-      expect.stringContaining("/search-indexes/TestIndex/hybrid"),
-      "token",
-      { query: "billing", limit: 5 }
-    );
+    expect(mockHttp.post).toHaveBeenCalledWith(expect.stringContaining("/search-indexes/TestIndex/hybrid"), "token", {
+      query: "billing",
+      limit: 5
+    });
   });
 });

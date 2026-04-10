@@ -30,9 +30,7 @@ describe("AuthManager", () => {
     expect(creds.accessToken).toBe("org-token-123");
     expect(creds.instanceUrl).toBe("https://test-org.my.salesforce.com");
     expect(vi.mocked(execSync)).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "sf org display --target-org TestOrg --json"
-      ),
+      expect.stringContaining("sf org display --target-org TestOrg --json"),
       expect.any(Object)
     );
   });
@@ -110,21 +108,24 @@ describe("AuthManager", () => {
       );
     });
 
-    const mockFetch = vi.fn()
+    const mockFetch = vi
+      .fn()
       .mockResolvedValueOnce({
         ok: false,
-        json: () => Promise.resolve({
-          error: "invalid_request",
-          error_description: "invalid subject token"
-        })
+        json: () =>
+          Promise.resolve({
+            error: "invalid_request",
+            error_description: "invalid subject token"
+          })
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({
-          access_token: "dc-token-fresh",
-          instance_url: "https://test-org.dc.salesforce.com",
-          token_type: "Bearer"
-        })
+        json: () =>
+          Promise.resolve({
+            access_token: "dc-token-fresh",
+            instance_url: "https://test-org.dc.salesforce.com",
+            token_type: "Bearer"
+          })
       });
     vi.stubGlobal("fetch", mockFetch);
 

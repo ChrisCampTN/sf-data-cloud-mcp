@@ -43,11 +43,7 @@ describe("estimateFlexCredits", () => {
       })
     };
 
-    const result = await estimateFlexCredits(
-      { mode: "live", target_org: "TestOrg" },
-      mockAuth as any,
-      mockHttp as any
-    );
+    const result = await estimateFlexCredits({ mode: "live", target_org: "TestOrg" }, mockAuth as any, mockHttp as any);
 
     expect(result.live_usage).toBeDefined();
     expect(mockHttp.post).toHaveBeenCalled();

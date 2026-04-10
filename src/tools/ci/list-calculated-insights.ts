@@ -26,7 +26,7 @@ export async function listCalculatedInsightsTool(
     return result.items;
   }
 
-  return result.items.map(ci => ({
+  return result.items.map((ci) => ({
     apiName: ci.apiName,
     displayName: ci.displayName,
     calculatedInsightStatus: ci.calculatedInsightStatus

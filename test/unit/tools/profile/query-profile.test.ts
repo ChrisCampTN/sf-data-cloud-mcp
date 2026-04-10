@@ -43,9 +43,6 @@ describe("queryProfileTool", () => {
       mockHttp as any
     );
 
-    expect(mockHttp.get).toHaveBeenCalledWith(
-      expect.stringContaining("filter="),
-      "dc-token"
-    );
+    expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining("filter="), "dc-token");
   });
 });

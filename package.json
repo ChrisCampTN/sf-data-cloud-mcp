@@ -16,8 +16,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
-    "prepare": "npm run build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prepare": "husky",
     "prepublishOnly": "npm run build"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "bash -c 'npm run lint'"
+    ]
   },
   "engines": {
     "node": ">=18"
@@ -40,6 +48,9 @@
   },
   "devDependencies": {
     "@types/node": "^25.5.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.2",
     "typescript": "^6.0.2",
     "vitest": "^4.1.3"
   }

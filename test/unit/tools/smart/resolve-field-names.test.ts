@@ -33,9 +33,7 @@ describe("resolveFieldNamesTool", () => {
       })
     };
     const mockHttp = {
-      get: vi.fn()
-        .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
-        .mockResolvedValueOnce(mappingFixture)
+      get: vi.fn().mockResolvedValueOnce({ dataStreams: dataStreamFixture }).mockResolvedValueOnce(mappingFixture)
     };
 
     const result = await resolveFieldNamesTool(

@@ -10,21 +10,14 @@ describe("FieldResolver", () => {
     };
 
     const resolver = new FieldResolver(mockHttp as any);
-    const dloName = await resolver.resolveDloName(
-      "Billing_Account__c",
-      "token",
-      "https://instance.com"
-    );
+    const dloName = await resolver.resolveDloName("Billing_Account__c", "token", "https://instance.com");
 
     expect(dloName).toBe("Billing_Account_c_00Dxx0000000001__dll");
   });
 
   it("resolves DLO field to DMO field via mapping", async () => {
     const mockHttp = {
-      get: vi
-        .fn()
-        .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
-        .mockResolvedValueOnce(dmoMappingFixture)
+      get: vi.fn().mockResolvedValueOnce({ dataStreams: dataStreamFixture }).mockResolvedValueOnce(dmoMappingFixture)
     };
 
     const resolver = new FieldResolver(mockHttp as any);
@@ -53,13 +46,13 @@ describe("FieldResolver", () => {
     };
 
     const mockHttp = {
-      get: vi.fn()
-        .mockResolvedValueOnce({ dataStreams: dataStreamFixture })           // resolveDloName
-        .mockResolvedValueOnce(mappingWithRenamedField)                       // mapping lookup
-        .mockResolvedValueOnce({                                              // stream describe fallback
-          sourceFields: [
-            { name: "Remaining_Balance_formula_c", developerName: "Remaining_Balance_formula_c" }
-          ]
+      get: vi
+        .fn()
+        .mockResolvedValueOnce({ dataStreams: dataStreamFixture }) // resolveDloName
+        .mockResolvedValueOnce(mappingWithRenamedField) // mapping lookup
+        .mockResolvedValueOnce({
+          // stream describe fallback
+          sourceFields: [{ name: "Remaining_Balance_formula_c", developerName: "Remaining_Balance_formula_c" }]
         })
     };
 
@@ -78,10 +71,11 @@ describe("FieldResolver", () => {
 
   it("returns simple transform when stream describe fallback also misses", async () => {
     const mockHttp = {
-      get: vi.fn()
+      get: vi
+        .fn()
         .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
-        .mockResolvedValueOnce({ ...dmoMappingFixture, mappings: [] })  // no mappings at all
-        .mockResolvedValueOnce({ sourceFields: [] })                     // stream has no matching field
+        .mockResolvedValueOnce({ ...dmoMappingFixture, mappings: [] }) // no mappings at all
+        .mockResolvedValueOnce({ sourceFields: [] }) // stream has no matching field
     };
 
     const resolver = new FieldResolver(mockHttp as any);
@@ -99,10 +93,11 @@ describe("FieldResolver", () => {
 
   it("returns simple transform when stream describe throws", async () => {
     const mockHttp = {
-      get: vi.fn()
+      get: vi
+        .fn()
         .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
         .mockResolvedValueOnce({ ...dmoMappingFixture, mappings: [] })
-        .mockRejectedValueOnce(new Error("404 Not Found"))  // stream describe fails
+        .mockRejectedValueOnce(new Error("404 Not Found")) // stream describe fails
     };
 
     const resolver = new FieldResolver(mockHttp as any);

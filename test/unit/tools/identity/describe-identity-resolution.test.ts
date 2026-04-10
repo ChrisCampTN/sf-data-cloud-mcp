@@ -20,9 +20,6 @@ describe("describeIdentityResolutionTool", () => {
     );
 
     expect(result.label).toBe("Test");
-    expect(mockHttp.get).toHaveBeenCalledWith(
-      expect.stringContaining("/identity-resolutions/Test"),
-      "token"
-    );
+    expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining("/identity-resolutions/Test"), "token");
   });
 });

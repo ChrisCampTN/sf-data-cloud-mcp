@@ -27,10 +27,6 @@ export async function resolveFieldNamesTool(
     return { ...mapping };
   }
 
-  const dloName = await resolver.resolveDloName(
-    input.crm_object,
-    orgCreds.accessToken,
-    orgCreds.instanceUrl
-  );
+  const dloName = await resolver.resolveDloName(input.crm_object, orgCreds.accessToken, orgCreds.instanceUrl);
   return { crm: input.crm_object, dlo: dloName };
 }

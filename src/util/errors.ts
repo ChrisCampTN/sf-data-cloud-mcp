@@ -26,18 +26,15 @@ const ERROR_PATTERNS: ErrorPattern[] = [
   },
   {
     pattern: /Unable to find Primary Key of DLO/i,
-    translate: () =>
-      `Reference table DLOs require a Key field in the mapping. Include Key__c in your field list.`
+    translate: () => `Reference table DLOs require a Key field in the mapping. Include Key__c in your field list.`
   },
   {
     pattern: /The Definition Type is not supported/i,
-    translate: () =>
-      `Missing definitionType field. Add "definitionType": "CALCULATED_METRIC" to your CI definition.`
+    translate: () => `Missing definitionType field. Add "definitionType": "CALCULATED_METRIC" to your CI definition.`
   },
   {
     pattern: /Missing required field\(s\):\s*(.+)/i,
-    translate: (match) =>
-      `Missing required field(s): ${match[1]}. Check the design doc Section 8 for expected formats.`
+    translate: (match) => `Missing required field(s): ${match[1]}. Check the design doc Section 8 for expected formats.`
   }
 ];
 
