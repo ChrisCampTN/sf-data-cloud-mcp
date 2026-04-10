@@ -38,7 +38,11 @@ describe("DataCloudHttpClient", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const client = new DataCloudHttpClient();
-    const result = await client.post("https://example.com/api/test", "token123", { name: "test" });
+    const result = await client.post(
+      "https://example.com/api/test",
+      "token123",
+      { name: "test" }
+    );
 
     expect(mockFetch).toHaveBeenCalledWith(
       "https://example.com/api/test",
@@ -53,29 +57,19 @@ describe("DataCloudHttpClient", () => {
     expect(result).toEqual({ created: true });
   });
 
-  it("handles 204 No Content on DELETE", async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 204
-    });
-    vi.stubGlobal("fetch", mockFetch);
-
-    const client = new DataCloudHttpClient();
-    const result = await client.delete("https://example.com/api/test", "token123");
-
-    expect(result).toEqual({});
-  });
-
   it("throws translated error on non-ok response", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 400,
-      json: () => Promise.resolve({ message: "The Definition Type is not supported" })
+      json: () =>
+        Promise.resolve({ message: "The Definition Type is not supported" })
     });
     vi.stubGlobal("fetch", mockFetch);
 
     const client = new DataCloudHttpClient();
-    await expect(client.get("https://example.com/api/test", "token123")).rejects.toThrow("CALCULATED_METRIC");
+    await expect(
+      client.get("https://example.com/api/test", "token123")
+    ).rejects.toThrow("CALCULATED_METRIC");
   });
 
   it("extracts errorMessage from response body", async () => {
@@ -87,9 +81,9 @@ describe("DataCloudHttpClient", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const client = new DataCloudHttpClient();
-    await expect(client.post("https://example.com/api/test", "token123", {})).rejects.toThrow(
-      'Unrecognized field "type"'
-    );
+    await expect(
+      client.post("https://example.com/api/test", "token123", {})
+    ).rejects.toThrow('Unrecognized field "type"');
   });
 
   it("extracts error from array-shaped response", async () => {
@@ -101,9 +95,9 @@ describe("DataCloudHttpClient", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const client = new DataCloudHttpClient();
-    await expect(client.get("https://example.com/api/test", "token123")).rejects.toThrow(
-      "The requested resource does not exist"
-    );
+    await expect(
+      client.get("https://example.com/api/test", "token123")
+    ).rejects.toThrow("The requested resource does not exist");
   });
 
   it("extracts error_description from OAuth-style response", async () => {
@@ -115,7 +109,9 @@ describe("DataCloudHttpClient", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const client = new DataCloudHttpClient();
-    await expect(client.get("https://example.com/api/test", "token123")).rejects.toThrow("invalid subject token");
+    await expect(
+      client.get("https://example.com/api/test", "token123")
+    ).rejects.toThrow("invalid subject token");
   });
 
   it("falls back to JSON.stringify for unknown error shapes", async () => {
@@ -127,7 +123,39 @@ describe("DataCloudHttpClient", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const client = new DataCloudHttpClient();
-    await expect(client.get("https://example.com/api/test", "token123")).rejects.toThrow("foo");
+    await expect(
+      client.get("https://example.com/api/test", "token123")
+    ).rejects.toThrow("foo");
+  });
+
+  it("returns empty object for 204 No Content response", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 204,
+      headers: new Map([["content-length", "0"]]),
+      json: () => { throw new Error("Unexpected end of JSON input"); }
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    const result = await client.delete("https://example.com/api/test", "token123");
+
+    expect(result).toEqual({});
+  });
+
+  it("returns empty object for 200 with content-length 0", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Map([["content-length", "0"]]),
+      json: () => { throw new Error("Unexpected end of JSON input"); }
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    const result = await client.get("https://example.com/api/test", "token123");
+
+    expect(result).toEqual({});
   });
 
   it("retries on 429 and 5xx", async () => {
@@ -184,18 +212,16 @@ describe("DataCloudHttpClient", () => {
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () =>
-          Promise.resolve({
-            dataModelObject: [{ name: "a" }, { name: "b" }]
-          })
+        json: () => Promise.resolve({
+          dataModelObject: [{ name: "a" }, { name: "b" }]
+        })
       })
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () =>
-          Promise.resolve({
-            dataModelObject: [{ name: "c" }]
-          })
+        json: () => Promise.resolve({
+          dataModelObject: [{ name: "c" }]
+        })
       });
     vi.stubGlobal("fetch", mockFetch);
 
@@ -209,7 +235,7 @@ describe("DataCloudHttpClient", () => {
     );
 
     expect(result.items).toHaveLength(3);
-    expect(result.items.map((i) => i.name)).toEqual(["a", "b", "c"]);
+    expect(result.items.map(i => i.name)).toEqual(["a", "b", "c"]);
     expect(mockFetch).toHaveBeenCalledTimes(2);
     expect(mockFetch.mock.calls[1][0]).toContain("offset=2");
     expect(mockFetch.mock.calls[1][0]).toContain("batchSize=2");
@@ -222,24 +248,22 @@ describe("DataCloudHttpClient", () => {
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () =>
-          Promise.resolve({
-            segments: [{ name: "a" }, { name: "b" }],
-            totalSize: 3,
-            batchSize: 2,
-            offset: 0
-          })
+        json: () => Promise.resolve({
+          segments: [{ name: "a" }, { name: "b" }],
+          totalSize: 3,
+          batchSize: 2,
+          offset: 0
+        })
       })
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () =>
-          Promise.resolve({
-            segments: [{ name: "c" }],
-            totalSize: 3,
-            batchSize: 2,
-            offset: 2
-          })
+        json: () => Promise.resolve({
+          segments: [{ name: "c" }],
+          totalSize: 3,
+          batchSize: 2,
+          offset: 2
+        })
       });
     vi.stubGlobal("fetch", mockFetch);
 
@@ -261,10 +285,9 @@ describe("DataCloudHttpClient", () => {
     const mockFetch = vi.fn().mockResolvedValueOnce({
       ok: true,
       status: 200,
-      json: () =>
-        Promise.resolve({
-          dataModelObject: [{ name: "a" }]
-        })
+      json: () => Promise.resolve({
+        dataModelObject: [{ name: "a" }]
+      })
     });
     vi.stubGlobal("fetch", mockFetch);
 
@@ -287,21 +310,19 @@ describe("DataCloudHttpClient", () => {
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () =>
-          Promise.resolve({
-            dataStreams: [{ name: "a" }],
-            nextPageUrl: "/services/data/v66.0/ssot/data-streams?offset=1",
-            totalSize: 2
-          })
+        json: () => Promise.resolve({
+          dataStreams: [{ name: "a" }],
+          nextPageUrl: "/services/data/v66.0/ssot/data-streams?offset=1",
+          totalSize: 2
+        })
       })
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () =>
-          Promise.resolve({
-            dataStreams: [{ name: "b" }],
-            totalSize: 2
-          })
+        json: () => Promise.resolve({
+          dataStreams: [{ name: "b" }],
+          totalSize: 2
+        })
       });
     vi.stubGlobal("fetch", mockFetch);
 
