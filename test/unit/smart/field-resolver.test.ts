@@ -10,14 +10,29 @@ describe("FieldResolver", () => {
     };
 
     const resolver = new FieldResolver(mockHttp as any);
-    const dloName = await resolver.resolveDloName("Billing_Account__c", "token", "https://instance.com");
+    const dloName = await resolver.resolveDloName(
+      "Billing_Account__c",
+      "token",
+      "https://instance.com"
+    );
 
     expect(dloName).toBe("Billing_Account_c_00Dxx0000000001__dll");
   });
 
   it("resolves DLO field to DMO field via mapping", async () => {
     const mockHttp = {
-      get: vi.fn().mockResolvedValueOnce({ dataStreams: dataStreamFixture }).mockResolvedValueOnce(dmoMappingFixture)
+      get: vi
+        .fn()
+        .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
+        .mockResolvedValueOnce(dmoMappingFixture),
+      post: vi.fn().mockResolvedValue({
+        metadata: {
+          columns: [
+            { name: "Adjusted_Credit_Score_c__c" },
+            { name: "Status_c__c" }
+          ]
+        }
+      })
     };
 
     const resolver = new FieldResolver(mockHttp as any);
@@ -34,26 +49,21 @@ describe("FieldResolver", () => {
     expect(mapping.dmoField).toBe("Adjusted_Credit_Score_c_c__c");
   });
 
-  it("falls back to stream describe when simple transform misses", async () => {
-    // Simulate: CRM field Remaining_Balance__c → simple transform gives Remaining_Balance_c__c
-    // But actual DLO field is Remaining_Balance_formula_c__c (renamed formula field)
-    const mappingWithRenamedField = {
-      ...dmoMappingFixture,
-      mappings: [
-        ...dmoMappingFixture.mappings,
-        { sourceField: "Remaining_Balance_formula_c__c", targetField: "RemainingBalance_c__c" }
-      ]
-    };
-
+  it("falls back to actual DLO columns when guess doesn't match", async () => {
     const mockHttp = {
       get: vi
         .fn()
-        .mockResolvedValueOnce({ dataStreams: dataStreamFixture }) // resolveDloName
-        .mockResolvedValueOnce(mappingWithRenamedField) // mapping lookup
-        .mockResolvedValueOnce({
-          // stream describe fallback
-          sourceFields: [{ name: "Remaining_Balance_formula_c", developerName: "Remaining_Balance_formula_c" }]
-        })
+        .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
+        .mockResolvedValueOnce(dmoMappingFixture),
+      post: vi.fn().mockResolvedValue({
+        metadata: {
+          columns: [
+            { name: "Remaining_Balance_formula_c__c" },
+            { name: "Name__c" },
+            { name: "Id__c" }
+          ]
+        }
+      })
     };
 
     const resolver = new FieldResolver(mockHttp as any);
@@ -64,51 +74,93 @@ describe("FieldResolver", () => {
       "https://instance.com"
     );
 
+    // Guess would be "Remaining_Balance_c__c" but actual DLO column is
+    // "Remaining_Balance_formula_c__c". Should fuzzy-match on "Remaining_Balance".
     expect(mapping.dloField).toBe("Remaining_Balance_formula_c__c");
-    expect(mapping.dmoField).toBe("RemainingBalance_c__c");
-    expect(mockHttp.get).toHaveBeenCalledTimes(3); // DLO name + mapping + stream describe
   });
 
-  it("returns simple transform when stream describe fallback also misses", async () => {
+  it("uses guessed name when it matches actual DLO columns", async () => {
     const mockHttp = {
       get: vi
         .fn()
         .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
-        .mockResolvedValueOnce({ ...dmoMappingFixture, mappings: [] }) // no mappings at all
-        .mockResolvedValueOnce({ sourceFields: [] }) // stream has no matching field
+        .mockResolvedValueOnce(dmoMappingFixture),
+      post: vi.fn().mockResolvedValue({
+        metadata: {
+          columns: [
+            { name: "Status_c__c" },
+            { name: "Name__c" }
+          ]
+        }
+      })
     };
 
     const resolver = new FieldResolver(mockHttp as any);
     const mapping = await resolver.resolveFieldMapping(
       "Billing_Account__c",
-      "NonExistent__c",
+      "Status__c",
       "token",
       "https://instance.com"
     );
 
-    // Falls through gracefully — uses simple transform, dmoField is undefined
-    expect(mapping.dloField).toBe("NonExistent_c__c");
-    expect(mapping.dmoField).toBeUndefined();
+    // Guess "Status_c__c" matches an actual column — use it directly
+    expect(mapping.dloField).toBe("Status_c__c");
   });
 
-  it("returns simple transform when stream describe throws", async () => {
+  it("falls back to guessed name when query fails", async () => {
     const mockHttp = {
       get: vi
         .fn()
         .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
-        .mockResolvedValueOnce({ ...dmoMappingFixture, mappings: [] })
-        .mockRejectedValueOnce(new Error("404 Not Found")) // stream describe fails
+        .mockResolvedValueOnce(dmoMappingFixture),
+      post: vi.fn().mockRejectedValue(new Error("Network error"))
     };
 
     const resolver = new FieldResolver(mockHttp as any);
     const mapping = await resolver.resolveFieldMapping(
       "Billing_Account__c",
-      "NonExistent__c",
+      "Status__c",
       "token",
       "https://instance.com"
     );
 
-    expect(mapping.dloField).toBe("NonExistent_c__c");
-    expect(mapping.dmoField).toBeUndefined();
+    // Query failed — fall back to the string-based guess
+    expect(mapping.dloField).toBe("Status_c__c");
+  });
+
+  it("caches DLO columns across multiple resolutions", async () => {
+    const mockHttp = {
+      get: vi
+        .fn()
+        .mockResolvedValueOnce({ dataStreams: dataStreamFixture })
+        .mockResolvedValueOnce(dmoMappingFixture)
+        .mockResolvedValueOnce(dmoMappingFixture),
+      post: vi.fn().mockResolvedValue({
+        metadata: {
+          columns: [
+            { name: "Status_c__c" },
+            { name: "Name__c" }
+          ]
+        }
+      })
+    };
+
+    const resolver = new FieldResolver(mockHttp as any);
+
+    await resolver.resolveFieldMapping(
+      "Billing_Account__c",
+      "Status__c",
+      "token",
+      "https://instance.com"
+    );
+    await resolver.resolveFieldMapping(
+      "Billing_Account__c",
+      "Name",
+      "token",
+      "https://instance.com"
+    );
+
+    // POST (query) should only be called once — second call uses cache
+    expect(mockHttp.post).toHaveBeenCalledTimes(1);
   });
 });
