@@ -4,4 +4,6 @@ dist/
 .env
 test/validate-live.mjs
 test/probe-api-shapes.mjs
-docs/
+docs/plans/
+docs/handoff-*
+docs/findings-*
