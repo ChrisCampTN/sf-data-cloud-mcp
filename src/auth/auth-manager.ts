@@ -76,8 +76,11 @@ export class AuthManager {
         return this.exchangeDcToken(targetOrg, true);
       }
 
+      const detail = errorBody.error_description ?? errorBody.message ?? JSON.stringify(errorBody);
       throw new Error(
-        `Data Cloud token exchange failed: ${JSON.stringify(errorBody)}`
+        `Data Cloud token exchange failed: ${detail}. ` +
+        `If this persists, use org token tools (query_sql, list_dmos) instead of DC token tools (query_profile). ` +
+        `Verify Data Cloud is enabled: Setup > Data Cloud > Settings.`
       );
     }
 

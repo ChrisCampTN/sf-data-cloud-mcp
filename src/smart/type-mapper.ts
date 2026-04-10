@@ -1,16 +1,43 @@
-const DLO_TO_DMO_TYPE_MAP: Record<string, string> = {
+export type TypeContext = "mapping" | "ci_sql";
+
+/**
+ * DLO → DMO type maps by context.
+ *
+ * "mapping" context: types must match DLO exactly for field mappings to succeed.
+ * "ci_sql" context: types are coerced for CI SQL expressions (Date→DateTime, Currency→Number).
+ */
+const DLO_TO_DMO_MAPPING: Record<string, string> = {
   VARCHAR: "Text",
   DECIMAL: "Number",
-  BOOLEAN: "Checkbox",
-  DATE: "DateTime",                  // API quirk: Date → DateTime to avoid type mismatch
+  BOOLEAN: "Boolean",
+  DATE: "Date",                       // Must match DLO exactly for mappings
   TIMESTAMP: "DateTime",
   "TIMESTAMP WITH TIME ZONE": "DateTime",
   INTEGER: "Number",
-  BIGINT: "Number"
+  BIGINT: "Number",
+  CURRENCY: "Currency"                // Must stay Currency for mappings
 };
 
-export function correctDmoFieldType(dloType: string): string {
-  return DLO_TO_DMO_TYPE_MAP[dloType] ?? "Text";
+const DLO_TO_DMO_CI_SQL: Record<string, string> = {
+  VARCHAR: "Text",
+  DECIMAL: "Number",
+  BOOLEAN: "Checkbox",
+  DATE: "DateTime",                   // CI SQL requires DateTime, not Date
+  TIMESTAMP: "DateTime",
+  "TIMESTAMP WITH TIME ZONE": "DateTime",
+  INTEGER: "Number",
+  BIGINT: "Number",
+  CURRENCY: "Number"                  // CI SQL treats Currency as Number
+};
+
+/**
+ * Convert a DLO column type to the correct DMO field type.
+ * @param dloType - The DLO column type (e.g. VARCHAR, DECIMAL, DATE)
+ * @param context - "mapping" for DMO field mappings, "ci_sql" for CI SQL expressions
+ */
+export function correctDmoFieldType(dloType: string, context: TypeContext = "ci_sql"): string {
+  const map = context === "mapping" ? DLO_TO_DMO_MAPPING : DLO_TO_DMO_CI_SQL;
+  return map[dloType] ?? "Text";
 }
 
 export function cleanDmoFieldName(dloFieldName: string): string {

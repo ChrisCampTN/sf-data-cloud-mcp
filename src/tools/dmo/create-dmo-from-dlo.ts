@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { AuthManager } from "../../auth/auth-manager.js";
 import type { DataCloudHttpClient } from "../../util/http.js";
-import { correctDmoFieldType } from "../../smart/type-mapper.js";
+
 
 export const createDmoFromDloInputSchema = z.object({
   target_org: z.string().describe("Salesforce org alias or username"),
@@ -15,13 +15,11 @@ export const createDmoFromDloInputSchema = z.object({
 
 export type CreateDmoFromDloInput = z.infer<typeof createDmoFromDloInputSchema>;
 
-function dloFieldToDmoField(dloField: { name: string; type: string }): { name: string; type: string } {
+function dloFieldToDmoFieldName(dloFieldName: string): string {
   // Custom fields get doubled suffix: Field__c → Field_c__c
-  const dmoFieldName = dloField.name.endsWith("__c")
-    ? dloField.name.replace(/__c$/, "_c__c")
-    : dloField.name;
-
-  return { name: dmoFieldName, type: correctDmoFieldType(dloField.type) };
+  return dloFieldName.endsWith("__c")
+    ? dloFieldName.replace(/__c$/, "_c__c")
+    : dloFieldName;
 }
 
 export async function createDmoFromDloTool(
@@ -50,13 +48,20 @@ export async function createDmoFromDloTool(
   const dmoName = input.dmo_name ?? input.dlo_name.replace(/__dll$/, "__dlm");
   const category = input.category ?? "OTHER";
 
-  // Build DMO definition using POST schema (dataType, no __dlm suffix)
+  // Build DMO definition using POST schema (dataType, no __dlm/__c suffixes)
   const dmoFields = columns.map(col => {
-    const mapped = dloFieldToDmoField(col);
+    const dmoFieldName = dloFieldToDmoFieldName(col.name);
+    // Strip __c from field name — API auto-appends it
+    const createFieldName = dmoFieldName.endsWith("__c")
+      ? dmoFieldName.replace(/__c$/, "")
+      : dmoFieldName;
+    // Primary key: match Id__c, Key__c, or KQ_Id__c patterns specifically
+    const isPK = /^(Id|Key|KQ_Id)(__c|_c__c|_c)?$/i.test(col.name);
     return {
-      name: mapped.name,
-      dataType: mapped.type,
-      label: col.name.replace(/__c$/g, "").replace(/_/g, " ").trim()
+      name: createFieldName,
+      dataType: col.type,  // Use DLO type directly for mapping compatibility
+      label: col.name.replace(/__c$/g, "").replace(/_/g, " ").trim(),
+      isPrimaryKey: isPK
     };
   });
 
@@ -73,7 +78,7 @@ export async function createDmoFromDloTool(
   // Build mapping definition
   const fieldMappings = columns.map(col => ({
     sourceField: col.name,
-    targetField: dloFieldToDmoField(col).name
+    targetField: dloFieldToDmoFieldName(col.name)
   }));
 
   const mappingDefinition = {

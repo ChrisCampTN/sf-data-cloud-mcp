@@ -57,6 +57,19 @@ describe("DataCloudHttpClient", () => {
     expect(result).toEqual({ created: true });
   });
 
+  it("handles 204 No Content on DELETE", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 204
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    const result = await client.delete("https://example.com/api/test", "token123");
+
+    expect(result).toEqual({});
+  });
+
   it("throws translated error on non-ok response", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: false,

@@ -27,6 +27,33 @@ describe("transformForCreate", () => {
     expect(field.creationType).toBeUndefined();
   });
 
+  it("strips __c suffix from field names", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [{ name: "Provider_c__c", type: "Text" }]
+    });
+    const field = (result.fields as any[])[0];
+    expect(field.name).toBe("Provider_c");
+  });
+
+  it("adds isPrimaryKey: false to fields without it", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [{ name: "Score", type: "Number" }]
+    });
+    const field = (result.fields as any[])[0];
+    expect(field.isPrimaryKey).toBe(false);
+  });
+
+  it("preserves isPrimaryKey: true when set", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [{ name: "Id", type: "Text", isPrimaryKey: true }]
+    });
+    const field = (result.fields as any[])[0];
+    expect(field.isPrimaryKey).toBe(true);
+  });
+
   it("preserves dataType if already present", () => {
     const result = transformForCreate({
       name: "Test",
