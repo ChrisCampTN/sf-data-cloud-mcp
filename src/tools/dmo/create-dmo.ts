@@ -27,24 +27,24 @@ export function transformForCreate(definition: Record<string, unknown>): Record<
 
   // Transform fields array
   if (Array.isArray(result.fields)) {
-    result.fields = (result.fields as Record<string, unknown>[]).map((field) => {
+    result.fields = (result.fields as Record<string, unknown>[]).map(field => {
       const f = { ...field };
-      // Rename "type" → "dataType"
+      // Rename "type" -> "dataType"
       if ("type" in f && !("dataType" in f)) {
         f.dataType = f.type;
         delete f.type;
       }
-      // Strip __c suffix from field name — API auto-appends it
-      if (typeof f.name === "string" && f.name.endsWith("__c")) {
-        f.name = f.name.replace(/__c$/, "");
-      }
-      // Ensure isPrimaryKey is set explicitly
-      if (!("isPrimaryKey" in f)) {
-        f.isPrimaryKey = false;
-      }
       // Remove unsupported fields
       delete f.keyQualifierName;
       delete f.creationType;
+      // Strip __c suffix from field names — API auto-appends it
+      if (typeof f.name === "string" && f.name.endsWith("__c")) {
+        f.name = f.name.replace(/__c$/, "");
+      }
+      // Ensure isPrimaryKey is explicitly set
+      if (f.isPrimaryKey !== true) {
+        f.isPrimaryKey = false;
+      }
       return f;
     });
   }

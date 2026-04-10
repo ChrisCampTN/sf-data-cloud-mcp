@@ -27,33 +27,6 @@ describe("transformForCreate", () => {
     expect(field.creationType).toBeUndefined();
   });
 
-  it("strips __c suffix from field names", () => {
-    const result = transformForCreate({
-      name: "Test",
-      fields: [{ name: "Provider_c__c", type: "Text" }]
-    });
-    const field = (result.fields as any[])[0];
-    expect(field.name).toBe("Provider_c");
-  });
-
-  it("adds isPrimaryKey: false to fields without it", () => {
-    const result = transformForCreate({
-      name: "Test",
-      fields: [{ name: "Score", type: "Number" }]
-    });
-    const field = (result.fields as any[])[0];
-    expect(field.isPrimaryKey).toBe(false);
-  });
-
-  it("preserves isPrimaryKey: true when set", () => {
-    const result = transformForCreate({
-      name: "Test",
-      fields: [{ name: "Id", type: "Text", isPrimaryKey: true }]
-    });
-    const field = (result.fields as any[])[0];
-    expect(field.isPrimaryKey).toBe(true);
-  });
-
   it("preserves dataType if already present", () => {
     const result = transformForCreate({
       name: "Test",
@@ -66,6 +39,47 @@ describe("transformForCreate", () => {
   it("leaves name alone if no __dlm suffix", () => {
     const result = transformForCreate({ name: "PRA_Test" });
     expect(result.name).toBe("PRA_Test");
+  });
+
+  it("strips __c suffix from field names", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [
+        { name: "Id_c__c", dataType: "Text" },
+        { name: "Provider_c__c", dataType: "Text" },
+        { name: "Name_c__c", dataType: "Text" }
+      ]
+    });
+    const fields = result.fields as any[];
+    expect(fields[0].name).toBe("Id_c");
+    expect(fields[1].name).toBe("Provider_c");
+    expect(fields[2].name).toBe("Name_c");
+  });
+
+  it("adds isPrimaryKey false to non-PK fields", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [
+        { name: "Score", dataType: "Number" },
+        { name: "Name", dataType: "Text" }
+      ]
+    });
+    const fields = result.fields as any[];
+    expect(fields[0].isPrimaryKey).toBe(false);
+    expect(fields[1].isPrimaryKey).toBe(false);
+  });
+
+  it("preserves isPrimaryKey true on PK fields", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [
+        { name: "Id", dataType: "Text", isPrimaryKey: true },
+        { name: "Score", dataType: "Number" }
+      ]
+    });
+    const fields = result.fields as any[];
+    expect(fields[0].isPrimaryKey).toBe(true);
+    expect(fields[1].isPrimaryKey).toBe(false);
   });
 });
 
