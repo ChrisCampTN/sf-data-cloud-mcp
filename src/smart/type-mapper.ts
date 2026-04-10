@@ -1,42 +1,29 @@
-export type TypeContext = "mapping" | "ci_sql";
+export type TypeMapperContext = "ci" | "mapping";
 
-/**
- * DLO → DMO type maps by context.
- *
- * "mapping" context: types must match DLO exactly for field mappings to succeed.
- * "ci_sql" context: types are coerced for CI SQL expressions (Date→DateTime, Currency→Number).
- */
-const DLO_TO_DMO_MAPPING: Record<string, string> = {
-  VARCHAR: "Text",
-  DECIMAL: "Number",
-  BOOLEAN: "Boolean",
-  DATE: "Date", // Must match DLO exactly for mappings
-  TIMESTAMP: "DateTime",
-  "TIMESTAMP WITH TIME ZONE": "DateTime",
-  INTEGER: "Number",
-  BIGINT: "Number",
-  CURRENCY: "Currency" // Must stay Currency for mappings
-};
-
-const DLO_TO_DMO_CI_SQL: Record<string, string> = {
+const CI_TYPE_MAP: Record<string, string> = {
   VARCHAR: "Text",
   DECIMAL: "Number",
   BOOLEAN: "Checkbox",
-  DATE: "DateTime", // CI SQL requires DateTime, not Date
+  DATE: "DateTime",                  // CI quirk: Date -> DateTime to avoid type mismatch
   TIMESTAMP: "DateTime",
   "TIMESTAMP WITH TIME ZONE": "DateTime",
   INTEGER: "Number",
-  BIGINT: "Number",
-  CURRENCY: "Number" // CI SQL treats Currency as Number
+  BIGINT: "Number"
 };
 
-/**
- * Convert a DLO column type to the correct DMO field type.
- * @param dloType - The DLO column type (e.g. VARCHAR, DECIMAL, DATE)
- * @param context - "mapping" for DMO field mappings, "ci_sql" for CI SQL expressions
- */
-export function correctDmoFieldType(dloType: string, context: TypeContext = "ci_sql"): string {
-  const map = context === "mapping" ? DLO_TO_DMO_MAPPING : DLO_TO_DMO_CI_SQL;
+const MAPPING_TYPE_MAP: Record<string, string> = {
+  VARCHAR: "Text",
+  DECIMAL: "Number",
+  BOOLEAN: "Checkbox",
+  DATE: "Date",                      // Mapping: keep as Date — must match DLO exactly
+  TIMESTAMP: "DateTime",
+  "TIMESTAMP WITH TIME ZONE": "DateTime",
+  INTEGER: "Number",
+  BIGINT: "Number"
+};
+
+export function correctDmoFieldType(dloType: string, context: TypeMapperContext = "ci"): string {
+  const map = context === "mapping" ? MAPPING_TYPE_MAP : CI_TYPE_MAP;
   return map[dloType] ?? "Text";
 }
 
@@ -50,7 +37,11 @@ export function cleanDmoFieldName(dloFieldName: string): string {
   if (dloFieldName.match(/_c_c__c$/)) {
     return dloFieldName.replace(/_c_c__c$/, "_c__c");
   }
-  if (dloFieldName.match(/[a-z]_c__c$/) && !dloFieldName.startsWith("DataSource") && !dloFieldName.startsWith("KQ_")) {
+  if (
+    dloFieldName.match(/[a-z]_c__c$/) &&
+    !dloFieldName.startsWith("DataSource") &&
+    !dloFieldName.startsWith("KQ_")
+  ) {
     return dloFieldName.replace(/_c__c$/, "__c");
   }
   return dloFieldName;

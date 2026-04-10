@@ -1,22 +1,20 @@
 import { describe, it, expect } from "vitest";
-import { correctDmoFieldType, cleanDmoFieldName } from "../../../src/smart/type-mapper.js";
+import {
+  correctDmoFieldType,
+  cleanDmoFieldName
+} from "../../../src/smart/type-mapper.js";
 
-describe("correctDmoFieldType — ci_sql context (default)", () => {
-  it("converts DATE to DateTime for CI SQL", () => {
+describe("correctDmoFieldType", () => {
+  it("corrects DATE to DateTime (API quirk: avoids type mismatch)", () => {
     expect(correctDmoFieldType("DATE")).toBe("DateTime");
-    expect(correctDmoFieldType("DATE", "ci_sql")).toBe("DateTime");
-  });
-
-  it("converts CURRENCY to Number for CI SQL", () => {
-    expect(correctDmoFieldType("CURRENCY", "ci_sql")).toBe("Number");
-  });
-
-  it("converts BOOLEAN to Checkbox for CI SQL", () => {
-    expect(correctDmoFieldType("BOOLEAN", "ci_sql")).toBe("Checkbox");
   });
 
   it("keeps DECIMAL as Number", () => {
     expect(correctDmoFieldType("DECIMAL")).toBe("Number");
+  });
+
+  it("corrects BOOLEAN to Checkbox", () => {
+    expect(correctDmoFieldType("BOOLEAN")).toBe("Checkbox");
   });
 
   it("maps VARCHAR to Text", () => {
@@ -28,21 +26,29 @@ describe("correctDmoFieldType — ci_sql context (default)", () => {
   });
 });
 
-describe("correctDmoFieldType — mapping context", () => {
-  it("keeps DATE as Date for mappings", () => {
+describe("correctDmoFieldType with context", () => {
+  it("maps DATE to DateTime in ci context (default)", () => {
+    expect(correctDmoFieldType("DATE")).toBe("DateTime");
+    expect(correctDmoFieldType("DATE", "ci")).toBe("DateTime");
+  });
+
+  it("maps DATE to Date in mapping context", () => {
     expect(correctDmoFieldType("DATE", "mapping")).toBe("Date");
   });
 
-  it("keeps CURRENCY as Currency for mappings", () => {
-    expect(correctDmoFieldType("CURRENCY", "mapping")).toBe("Currency");
-  });
-
-  it("keeps BOOLEAN as Boolean for mappings", () => {
-    expect(correctDmoFieldType("BOOLEAN", "mapping")).toBe("Boolean");
-  });
-
-  it("maps DECIMAL to Number", () => {
+  it("maps DECIMAL to Number in both contexts", () => {
+    expect(correctDmoFieldType("DECIMAL", "ci")).toBe("Number");
     expect(correctDmoFieldType("DECIMAL", "mapping")).toBe("Number");
+  });
+
+  it("maps BOOLEAN to Checkbox in both contexts", () => {
+    expect(correctDmoFieldType("BOOLEAN", "ci")).toBe("Checkbox");
+    expect(correctDmoFieldType("BOOLEAN", "mapping")).toBe("Checkbox");
+  });
+
+  it("falls back to Text for unknown types in both contexts", () => {
+    expect(correctDmoFieldType("UNKNOWN", "ci")).toBe("Text");
+    expect(correctDmoFieldType("UNKNOWN", "mapping")).toBe("Text");
   });
 });
 
@@ -52,7 +58,9 @@ describe("cleanDmoFieldName", () => {
   });
 
   it("strips _c_c__c pattern to _c__c", () => {
-    expect(cleanDmoFieldName("Adjusted_Credit_Score_c_c__c")).toBe("Adjusted_Credit_Score_c__c");
+    expect(cleanDmoFieldName("Adjusted_Credit_Score_c_c__c")).toBe(
+      "Adjusted_Credit_Score_c__c"
+    );
   });
 
   it("leaves system fields unchanged", () => {
