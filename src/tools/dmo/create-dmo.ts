@@ -34,6 +34,14 @@ export function transformForCreate(definition: Record<string, unknown>): Record<
         f.dataType = f.type;
         delete f.type;
       }
+      // Strip __c suffix from field name — API auto-appends it
+      if (typeof f.name === "string" && f.name.endsWith("__c")) {
+        f.name = f.name.replace(/__c$/, "");
+      }
+      // Ensure isPrimaryKey is set explicitly
+      if (!("isPrimaryKey" in f)) {
+        f.isPrimaryKey = false;
+      }
       // Remove unsupported fields
       delete f.keyQualifierName;
       delete f.creationType;

@@ -57,8 +57,8 @@ export class FieldResolver {
       instanceUrl
     );
 
-    // CRM field Adjusted_Credit_Score__c → DLO field Adjusted_Credit_Score_c__c
-    const dloField = crmFieldName.replace(/__c$/, "_c__c");
+    // Try simple CRM→DLO name transform first
+    let dloField = crmFieldName.replace(/__c$/, "_c__c");
 
     // Get DMO mapping for this DLO
     const mapping = await this.http.get<{
@@ -70,9 +70,41 @@ export class FieldResolver {
       token
     );
 
-    const fieldMapping = mapping.mappings.find(
+    let fieldMapping = mapping.mappings.find(
       (m) => m.sourceField === dloField
     );
+
+    // If simple transform didn't match, describe the stream to find actual DLO field name
+    // (handles formula fields, renamed fields, relationship field naming differences)
+    if (!fieldMapping) {
+      try {
+        const streamName = dloName.replace(/__dll$/, "");
+        const streamDescribe = await this.http.get<{
+          sourceFields?: Array<{ name: string; developerName?: string }>;
+        }>(
+          `${instanceUrl}/services/data/v66.0/ssot/data-streams/${streamName}`,
+          token
+        );
+
+        const crmBase = crmFieldName.replace(/__c$/, "").replace(/__/, "_").toLowerCase();
+        const streamField = streamDescribe.sourceFields?.find(f => {
+          const name = (f.developerName ?? f.name ?? "").toLowerCase();
+          return name === crmBase || name.includes(crmBase);
+        });
+
+        if (streamField) {
+          const actualDloField = `${streamField.developerName ?? streamField.name}__c`;
+          fieldMapping = mapping.mappings.find(
+            (m) => m.sourceField === actualDloField
+          );
+          if (fieldMapping) {
+            dloField = actualDloField;
+          }
+        }
+      } catch {
+        // Stream describe failed — use the simple transform result
+      }
+    }
 
     return {
       crm: crmObjectName,

@@ -50,13 +50,18 @@ export async function createDmoFromDloTool(
   const dmoName = input.dmo_name ?? input.dlo_name.replace(/__dll$/, "__dlm");
   const category = input.category ?? "OTHER";
 
-  // Build DMO definition using POST schema (dataType, no __dlm suffix)
-  const dmoFields = columns.map(col => {
+  // Build DMO definition using POST schema (dataType, no __dlm/__c suffixes)
+  const dmoFields = columns.map((col, i) => {
     const mapped = dloFieldToDmoField(col);
+    // Strip __c from field name — API auto-appends it
+    const createName = mapped.name.endsWith("__c")
+      ? mapped.name.replace(/__c$/, "")
+      : mapped.name;
     return {
-      name: mapped.name,
-      dataType: mapped.type,
-      label: col.name.replace(/__c$/g, "").replace(/_/g, " ").trim()
+      name: createName,
+      dataType: col.type,  // Use DLO type directly for mapping compatibility
+      label: col.name.replace(/__c$/g, "").replace(/_/g, " ").trim(),
+      isPrimaryKey: i === 0 && col.name.toLowerCase().includes("id")
     };
   });
 

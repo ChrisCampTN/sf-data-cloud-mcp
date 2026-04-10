@@ -4,17 +4,22 @@ import {
   cleanDmoFieldName
 } from "../../../src/smart/type-mapper.js";
 
-describe("correctDmoFieldType", () => {
-  it("corrects DATE to DateTime (API quirk: avoids type mismatch)", () => {
+describe("correctDmoFieldType — ci_sql context (default)", () => {
+  it("converts DATE to DateTime for CI SQL", () => {
     expect(correctDmoFieldType("DATE")).toBe("DateTime");
+    expect(correctDmoFieldType("DATE", "ci_sql")).toBe("DateTime");
+  });
+
+  it("converts CURRENCY to Number for CI SQL", () => {
+    expect(correctDmoFieldType("CURRENCY", "ci_sql")).toBe("Number");
+  });
+
+  it("converts BOOLEAN to Checkbox for CI SQL", () => {
+    expect(correctDmoFieldType("BOOLEAN", "ci_sql")).toBe("Checkbox");
   });
 
   it("keeps DECIMAL as Number", () => {
     expect(correctDmoFieldType("DECIMAL")).toBe("Number");
-  });
-
-  it("corrects BOOLEAN to Checkbox", () => {
-    expect(correctDmoFieldType("BOOLEAN")).toBe("Checkbox");
   });
 
   it("maps VARCHAR to Text", () => {
@@ -23,6 +28,24 @@ describe("correctDmoFieldType", () => {
 
   it("maps TIMESTAMP WITH TIME ZONE to DateTime", () => {
     expect(correctDmoFieldType("TIMESTAMP WITH TIME ZONE")).toBe("DateTime");
+  });
+});
+
+describe("correctDmoFieldType — mapping context", () => {
+  it("keeps DATE as Date for mappings", () => {
+    expect(correctDmoFieldType("DATE", "mapping")).toBe("Date");
+  });
+
+  it("keeps CURRENCY as Currency for mappings", () => {
+    expect(correctDmoFieldType("CURRENCY", "mapping")).toBe("Currency");
+  });
+
+  it("keeps BOOLEAN as Boolean for mappings", () => {
+    expect(correctDmoFieldType("BOOLEAN", "mapping")).toBe("Boolean");
+  });
+
+  it("maps DECIMAL to Number", () => {
+    expect(correctDmoFieldType("DECIMAL", "mapping")).toBe("Number");
   });
 });
 

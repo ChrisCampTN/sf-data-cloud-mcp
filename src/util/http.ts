@@ -133,6 +133,10 @@ export class DataCloudHttpClient {
       const response = await fetch(url, init);
 
       if (response.ok) {
+        // 204 No Content (e.g. DELETE) — no body to parse
+        if (response.status === 204) {
+          return {} as T;
+        }
         return (await response.json()) as T;
       }
 
