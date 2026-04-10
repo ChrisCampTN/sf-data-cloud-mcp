@@ -3,3 +3,5 @@ dist/
 *.log
 .env
 test/validate-live.mjs
+test/probe-api-shapes.mjs
+docs/plans/
