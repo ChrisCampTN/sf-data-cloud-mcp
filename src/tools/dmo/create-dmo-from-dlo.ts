@@ -50,19 +50,21 @@ export async function createDmoFromDloTool(
   const dmoName = input.dmo_name ?? input.dlo_name.replace(/__dll$/, "__dlm");
   const category = input.category ?? "OTHER";
 
-  // Build DMO definition
+  // Build DMO definition using POST schema (dataType, no __dlm suffix)
   const dmoFields = columns.map(col => {
     const mapped = dloFieldToDmoField(col);
     return {
       name: mapped.name,
-      type: mapped.type,
-      label: col.name.replace(/__c$/g, "").replace(/_/g, " ").trim(),
-      creationType: "Custom"
+      dataType: mapped.type,
+      label: col.name.replace(/__c$/g, "").replace(/_/g, " ").trim()
     };
   });
 
+  // Strip __dlm suffix — API appends it
+  const createName = dmoName.endsWith("__dlm") ? dmoName.replace(/__dlm$/, "") : dmoName;
+
   const dmoDefinition = {
-    name: dmoName,
+    name: createName,
     category,
     dataSpaceName: "default",
     fields: dmoFields
