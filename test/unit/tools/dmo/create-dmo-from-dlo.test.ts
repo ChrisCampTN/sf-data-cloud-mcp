@@ -129,5 +129,9 @@ describe("createDmoFromDloTool", () => {
     for (const field of fields) {
       expect(field.name).not.toMatch(/__c$/);
     }
+    // All fields should have isPrimaryKey: false
+    for (const field of fields) {
+      expect(field.isPrimaryKey).toBe(false);
+    }
   });
 });

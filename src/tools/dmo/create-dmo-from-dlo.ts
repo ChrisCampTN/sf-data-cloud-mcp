@@ -78,7 +78,7 @@ export async function createDmoFromDloTool(
   // Build mapping definition
   const fieldMappings = columns.map(col => ({
     sourceField: col.name,
-    targetField: dloFieldToDmoField(col).name
+    targetField: dloFieldToDmoField(col, "mapping").name
   }));
 
   const mappingDefinition = {
