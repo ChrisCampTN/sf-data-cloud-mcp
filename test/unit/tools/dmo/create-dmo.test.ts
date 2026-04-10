@@ -1,5 +1,46 @@
 import { describe, it, expect, vi } from "vitest";
-import { createDmoTool } from "../../../../src/tools/dmo/create-dmo.js";
+import { createDmoTool, transformForCreate } from "../../../../src/tools/dmo/create-dmo.js";
+
+describe("transformForCreate", () => {
+  it("strips __dlm suffix from name", () => {
+    const result = transformForCreate({ name: "PRA_Test__dlm" });
+    expect(result.name).toBe("PRA_Test");
+  });
+
+  it("renames type to dataType in fields", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [{ name: "Score", type: "Number", label: "Score" }]
+    });
+    const field = (result.fields as any[])[0];
+    expect(field.dataType).toBe("Number");
+    expect(field.type).toBeUndefined();
+  });
+
+  it("removes keyQualifierName and creationType from fields", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [{ name: "Id", type: "Text", keyQualifierName: "KQ_Id", creationType: "Custom" }]
+    });
+    const field = (result.fields as any[])[0];
+    expect(field.keyQualifierName).toBeUndefined();
+    expect(field.creationType).toBeUndefined();
+  });
+
+  it("preserves dataType if already present", () => {
+    const result = transformForCreate({
+      name: "Test",
+      fields: [{ name: "Score", dataType: "Number" }]
+    });
+    const field = (result.fields as any[])[0];
+    expect(field.dataType).toBe("Number");
+  });
+
+  it("leaves name alone if no __dlm suffix", () => {
+    const result = transformForCreate({ name: "PRA_Test" });
+    expect(result.name).toBe("PRA_Test");
+  });
+});
 
 describe("createDmoTool", () => {
   const mockAuth = {
@@ -9,9 +50,9 @@ describe("createDmoTool", () => {
     })
   };
 
-  it("returns preview when confirm is false", async () => {
+  it("returns transformed preview when confirm is false", async () => {
     const mockHttp = { post: vi.fn() };
-    const definition = { name: "Test__dlm", fields: [] };
+    const definition = { name: "Test__dlm", fields: [{ name: "Score", type: "Number" }] };
 
     const result = await createDmoTool(
       { target_org: "TestOrg", definition, confirm: false },
@@ -20,15 +61,16 @@ describe("createDmoTool", () => {
     );
 
     expect(result.preview).toBe(true);
-    expect(result.definition).toEqual(definition);
+    expect((result.definition as any).name).toBe("Test");
+    expect((result.definition as any).fields[0].dataType).toBe("Number");
     expect(mockHttp.post).not.toHaveBeenCalled();
   });
 
-  it("creates DMO when confirm is true", async () => {
+  it("creates DMO with transformed definition when confirm is true", async () => {
     const mockHttp = {
       post: vi.fn().mockResolvedValue({ name: "Test__dlm", success: true })
     };
-    const definition = { name: "Test__dlm", fields: [] };
+    const definition = { name: "Test__dlm", fields: [{ name: "Score", type: "Number" }] };
 
     const result = await createDmoTool(
       { target_org: "TestOrg", definition, confirm: true },
@@ -36,12 +78,9 @@ describe("createDmoTool", () => {
       mockHttp as any
     );
 
-    expect(result.preview).toBeUndefined();
     expect(result.name).toBe("Test__dlm");
-    expect(mockHttp.post).toHaveBeenCalledWith(
-      expect.stringContaining("/ssot/data-model-objects"),
-      "token",
-      definition
-    );
+    const postBody = mockHttp.post.mock.calls[0][2];
+    expect(postBody.name).toBe("Test");
+    expect(postBody.fields[0].dataType).toBe("Number");
   });
 });

@@ -72,6 +72,62 @@ describe("DataCloudHttpClient", () => {
     ).rejects.toThrow("CALCULATED_METRIC");
   });
 
+  it("extracts errorMessage from response body", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: () => Promise.resolve({ errorMessage: 'Unrecognized field "type"' })
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    await expect(
+      client.post("https://example.com/api/test", "token123", {})
+    ).rejects.toThrow('Unrecognized field "type"');
+  });
+
+  it("extracts error from array-shaped response", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: () => Promise.resolve([{ errorCode: "NOT_FOUND", message: "The requested resource does not exist" }])
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    await expect(
+      client.get("https://example.com/api/test", "token123")
+    ).rejects.toThrow("The requested resource does not exist");
+  });
+
+  it("extracts error_description from OAuth-style response", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: () => Promise.resolve({ error: "invalid_request", error_description: "invalid subject token" })
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    await expect(
+      client.get("https://example.com/api/test", "token123")
+    ).rejects.toThrow("invalid subject token");
+  });
+
+  it("falls back to JSON.stringify for unknown error shapes", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: () => Promise.resolve({ code: 123, foo: "bar" })
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const client = new DataCloudHttpClient();
+    await expect(
+      client.get("https://example.com/api/test", "token123")
+    ).rejects.toThrow("foo");
+  });
+
   it("retries on 429 and 5xx", async () => {
     const mockFetch = vi
       .fn()

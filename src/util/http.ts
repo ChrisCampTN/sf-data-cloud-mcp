@@ -139,9 +139,7 @@ export class DataCloudHttpClient {
       const errorBody = await response
         .json()
         .catch(() => ({ message: `HTTP ${response.status}` }));
-      const errorMessage =
-        (errorBody as { message?: string }).message ??
-        `HTTP ${response.status}`;
+      const errorMessage = extractErrorMessage(errorBody, response.status);
 
       if (
         (response.status === 429 || response.status >= 500) &&
@@ -161,6 +159,52 @@ export class DataCloudHttpClient {
     }
 
     throw lastError ?? new Error("Request failed after retries");
+  }
+}
+
+/**
+ * Extract error message from various API error response shapes.
+ * Data Cloud returns errors in multiple formats depending on the endpoint.
+ */
+function extractErrorMessage(body: unknown, status: number): string {
+  if (typeof body === "string") return body;
+  if (!body || typeof body !== "object") return `HTTP ${status}`;
+
+  const obj = body as Record<string, unknown>;
+
+  // Shape: { message: "..." }
+  if (typeof obj.message === "string" && obj.message) return obj.message;
+
+  // Shape: { errorMessage: "..." }
+  if (typeof obj.errorMessage === "string" && obj.errorMessage) return obj.errorMessage;
+
+  // Shape: { detail: "..." }
+  if (typeof obj.detail === "string" && obj.detail) return obj.detail;
+
+  // Shape: { error: "...", error_description: "..." }
+  if (typeof obj.error_description === "string") return obj.error_description;
+  if (typeof obj.error === "string" && obj.error) return obj.error;
+
+  // Shape: [{ message: "..." }] (array of errors)
+  if (Array.isArray(body) && body.length > 0) {
+    const first = body[0] as Record<string, unknown>;
+    if (typeof first.message === "string") return first.message;
+    if (typeof first.errorMessage === "string") return first.errorMessage;
+  }
+
+  // Shape: { errors: [{ message: "..." }] }
+  if (Array.isArray(obj.errors) && obj.errors.length > 0) {
+    const first = obj.errors[0] as Record<string, unknown>;
+    if (typeof first.message === "string") return first.message;
+  }
+
+  // Fallback: stringify the whole body
+  try {
+    const str = JSON.stringify(body);
+    if (str.length <= 500) return str;
+    return str.slice(0, 500) + "...";
+  } catch {
+    return `HTTP ${status}`;
   }
 }
 

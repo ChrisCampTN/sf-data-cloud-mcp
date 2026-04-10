@@ -81,16 +81,24 @@ export class AuthManager {
       );
     }
 
-    const tokenResponse = (await response.json()) as {
-      access_token: string;
-      instance_url: string;
-      token_type: string;
-    };
+    const tokenResponse = (await response.json()) as Record<string, unknown>;
 
-    const creds: DataCloudCredentials = {
-      accessToken: tokenResponse.access_token,
-      instanceUrl: tokenResponse.instance_url
-    };
+    const accessToken = (tokenResponse.access_token ?? tokenResponse.accessToken) as string;
+    const instanceUrl = (
+      tokenResponse.instance_url ??
+      tokenResponse.instanceUrl ??
+      tokenResponse.cdp_instance_url ??
+      tokenResponse.cdpInstanceUrl
+    ) as string;
+
+    if (!accessToken) {
+      throw new Error(`Data Cloud token exchange returned no access token. Response keys: ${Object.keys(tokenResponse).join(", ")}`);
+    }
+    if (!instanceUrl) {
+      throw new Error(`Data Cloud token exchange returned no instance URL. Response keys: ${Object.keys(tokenResponse).join(", ")}`);
+    }
+
+    const creds: DataCloudCredentials = { accessToken, instanceUrl };
 
     this.dcCache.set(targetOrg, {
       creds,
