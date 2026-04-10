@@ -89,7 +89,8 @@ export class FieldResolver {
         const crmBase = crmFieldName.replace(/__c$/, "").replace(/__/, "_").toLowerCase();
         const streamField = streamDescribe.sourceFields?.find(f => {
           const name = (f.developerName ?? f.name ?? "").toLowerCase();
-          return name === crmBase || name.includes(crmBase);
+          // Exact match first, then check if name starts with crmBase (avoids false positives from substring matching)
+          return name === crmBase || name.startsWith(crmBase);
         });
 
         if (streamField) {
