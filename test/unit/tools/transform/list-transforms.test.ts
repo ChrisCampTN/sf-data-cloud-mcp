@@ -14,11 +14,7 @@ describe("listTransformsTool", () => {
       paginatedGet: vi.fn().mockResolvedValue({ items: fixture })
     };
 
-    const result = await listTransformsTool(
-      { target_org: "TestOrg" },
-      mockAuth as any,
-      mockHttp as any
-    );
+    const result = await listTransformsTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any);
 
     expect(result).toHaveLength(2);
     expect(result[0].type).toBe("BATCH");

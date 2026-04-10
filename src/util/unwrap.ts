@@ -12,10 +12,7 @@ export interface UnwrappedResponse {
   responseBatchSize?: number;
 }
 
-export function unwrapResponse(
-  data: unknown,
-  expectedKey: string
-): UnwrappedResponse {
+export function unwrapResponse(data: unknown, expectedKey: string): UnwrappedResponse {
   // Bare array
   if (Array.isArray(data)) {
     return { items: data };
@@ -65,8 +62,6 @@ export function unwrapResponse(
     items: (items ?? []) as Record<string, unknown>[],
     totalSize: typeof obj.totalSize === "number" ? obj.totalSize : undefined,
     nextPageUrl: typeof obj.nextPageUrl === "string" ? obj.nextPageUrl : undefined,
-    responseBatchSize: typeof obj.batchSize === "number" && obj.batchSize > 0
-      ? obj.batchSize
-      : undefined
+    responseBatchSize: typeof obj.batchSize === "number" && obj.batchSize > 0 ? obj.batchSize : undefined
   };
 }

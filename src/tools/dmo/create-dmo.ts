@@ -27,7 +27,7 @@ export function transformForCreate(definition: Record<string, unknown>): Record<
 
   // Transform fields array
   if (Array.isArray(result.fields)) {
-    result.fields = (result.fields as Record<string, unknown>[]).map(field => {
+    result.fields = (result.fields as Record<string, unknown>[]).map((field) => {
       const f = { ...field };
       // Rename "type" → "dataType"
       if ("type" in f && !("dataType" in f)) {

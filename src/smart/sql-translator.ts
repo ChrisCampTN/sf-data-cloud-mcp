@@ -66,9 +66,29 @@ function escapeRegExp(s: string): string {
 
 function isKeyword(word: string): boolean {
   const keywords = new Set([
-    "ON", "WHERE", "AND", "OR", "LEFT", "RIGHT", "INNER", "OUTER",
-    "JOIN", "CROSS", "GROUP", "BY", "ORDER", "HAVING", "LIMIT",
-    "SELECT", "FROM", "AS", "CASE", "WHEN", "THEN", "ELSE", "END"
+    "ON",
+    "WHERE",
+    "AND",
+    "OR",
+    "LEFT",
+    "RIGHT",
+    "INNER",
+    "OUTER",
+    "JOIN",
+    "CROSS",
+    "GROUP",
+    "BY",
+    "ORDER",
+    "HAVING",
+    "LIMIT",
+    "SELECT",
+    "FROM",
+    "AS",
+    "CASE",
+    "WHEN",
+    "THEN",
+    "ELSE",
+    "END"
   ]);
   return keywords.has(word.toUpperCase());
 }

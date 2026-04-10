@@ -43,11 +43,9 @@ export async function estimateFlexCredits(
 ): Promise<Record<string, unknown>> {
   if (input.mode === "live" && auth && http && input.target_org) {
     const orgCreds = await auth.getOrgCredentials(input.target_org);
-    const usage = await http.post(
-      `${orgCreds.instanceUrl}/services/data/v66.0/ssot/query`,
-      orgCreds.accessToken,
-      { sql: "SELECT Unit_Consumed, Drawdown_Day FROM FlexCreditsUsage__dll ORDER BY Drawdown_Day DESC LIMIT 30" }
-    );
+    const usage = await http.post(`${orgCreds.instanceUrl}/services/data/v66.0/ssot/query`, orgCreds.accessToken, {
+      sql: "SELECT Unit_Consumed, Drawdown_Day FROM FlexCreditsUsage__dll ORDER BY Drawdown_Day DESC LIMIT 30"
+    });
     return { live_usage: usage };
   }
 
@@ -55,7 +53,8 @@ export async function estimateFlexCredits(
 
   if (input.ci_count && input.avg_records_per_ci) {
     const multiplier = SCHEDULE_MULTIPLIER[input.schedule ?? "daily"] ?? 1;
-    const dailyCredits = input.ci_count * (input.avg_records_per_ci / 1000) * CREDIT_RATES.ci_refresh_per_1k_rows * multiplier;
+    const dailyCredits =
+      input.ci_count * (input.avg_records_per_ci / 1000) * CREDIT_RATES.ci_refresh_per_1k_rows * multiplier;
     breakdown.push({
       operation: "Calculated Insight refresh",
       daily_credits: dailyCredits,
@@ -64,7 +63,8 @@ export async function estimateFlexCredits(
   }
 
   if (input.stream_count && input.avg_records_per_stream) {
-    const dailyCredits = input.stream_count * (input.avg_records_per_stream / 1000) * CREDIT_RATES.stream_ingestion_per_1k_records;
+    const dailyCredits =
+      input.stream_count * (input.avg_records_per_stream / 1000) * CREDIT_RATES.stream_ingestion_per_1k_records;
     breakdown.push({
       operation: "Data stream ingestion",
       daily_credits: dailyCredits,

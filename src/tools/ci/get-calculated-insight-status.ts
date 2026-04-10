@@ -22,9 +22,7 @@ export async function getCalculatedInsightStatusTool(
     orgCreds.instanceUrl
   );
 
-  const ci = result.items.find(
-    (c) => c.apiName === input.ci_name
-  );
+  const ci = result.items.find((c) => c.apiName === input.ci_name);
 
   if (!ci) {
     throw new Error(`Calculated Insight "${input.ci_name}" not found`);

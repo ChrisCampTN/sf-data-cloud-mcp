@@ -15,9 +15,5 @@ export async function querySqlTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  return http.post(
-    `${orgCreds.instanceUrl}/services/data/v66.0/ssot/query`,
-    orgCreds.accessToken,
-    { sql: input.sql }
-  );
+  return http.post(`${orgCreds.instanceUrl}/services/data/v66.0/ssot/query`, orgCreds.accessToken, { sql: input.sql });
 }

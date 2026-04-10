@@ -17,11 +17,7 @@ export class FieldResolver {
     this.http = http;
   }
 
-  async resolveDloName(
-    crmObjectName: string,
-    token: string,
-    instanceUrl: string
-  ): Promise<string> {
+  async resolveDloName(crmObjectName: string, token: string, instanceUrl: string): Promise<string> {
     const cached = this.dloCache.get(crmObjectName);
     if (cached) return cached;
 
@@ -31,9 +27,7 @@ export class FieldResolver {
 
     // CRM object Billing_Account__c → DLO name pattern: Billing_Account_c_*__dll
     const crmBase = crmObjectName.replace(/__c$/, "_c").replace(/__/, "_");
-    const stream = response.dataStreams.find(
-      (s) => s.name.startsWith(crmBase) || s.label.includes(crmObjectName)
-    );
+    const stream = response.dataStreams.find((s) => s.name.startsWith(crmBase) || s.label.includes(crmObjectName));
 
     if (!stream) {
       throw new Error(`No data stream found for CRM object: ${crmObjectName}`);
@@ -51,11 +45,7 @@ export class FieldResolver {
     token: string,
     instanceUrl: string
   ): Promise<FieldMapping> {
-    const dloName = await this.resolveDloName(
-      crmObjectName,
-      token,
-      instanceUrl
-    );
+    const dloName = await this.resolveDloName(crmObjectName, token, instanceUrl);
 
     // Try simple CRM→DLO name transform first
     let dloField = crmFieldName.replace(/__c$/, "_c__c");
@@ -65,14 +55,9 @@ export class FieldResolver {
       sourceDlo: string;
       targetDmo: string;
       mappings: Array<{ sourceField: string; targetField: string }>;
-    }>(
-      `${instanceUrl}/services/data/v66.0/ssot/data-model-object-mappings?dloDeveloperName=${dloName}`,
-      token
-    );
+    }>(`${instanceUrl}/services/data/v66.0/ssot/data-model-object-mappings?dloDeveloperName=${dloName}`, token);
 
-    let fieldMapping = mapping.mappings.find(
-      (m) => m.sourceField === dloField
-    );
+    let fieldMapping = mapping.mappings.find((m) => m.sourceField === dloField);
 
     // If simple transform didn't match, describe the stream to find actual DLO field name
     // (handles formula fields, renamed fields, relationship field naming differences)
@@ -81,13 +66,10 @@ export class FieldResolver {
         const streamName = dloName.replace(/__dll$/, "");
         const streamDescribe = await this.http.get<{
           sourceFields?: Array<{ name: string; developerName?: string }>;
-        }>(
-          `${instanceUrl}/services/data/v66.0/ssot/data-streams/${streamName}`,
-          token
-        );
+        }>(`${instanceUrl}/services/data/v66.0/ssot/data-streams/${streamName}`, token);
 
         const crmBase = crmFieldName.replace(/__c$/, "").replace(/__/, "_").toLowerCase();
-        const streamField = streamDescribe.sourceFields?.find(f => {
+        const streamField = streamDescribe.sourceFields?.find((f) => {
           const name = (f.developerName ?? f.name ?? "").toLowerCase();
           // Exact match first, then check if name starts with crmBase (avoids false positives from substring matching)
           return name === crmBase || name.startsWith(crmBase);
@@ -95,9 +77,7 @@ export class FieldResolver {
 
         if (streamField) {
           const actualDloField = `${streamField.developerName ?? streamField.name}__c`;
-          fieldMapping = mapping.mappings.find(
-            (m) => m.sourceField === actualDloField
-          );
+          fieldMapping = mapping.mappings.find((m) => m.sourceField === actualDloField);
           if (fieldMapping) {
             dloField = actualDloField;
           }

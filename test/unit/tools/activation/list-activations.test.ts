@@ -13,11 +13,7 @@ describe("listActivationsTool", () => {
       paginatedGet: vi.fn().mockResolvedValue({ items: [] })
     };
 
-    const result = await listActivationsTool(
-      { target_org: "TestOrg" },
-      mockAuth as any,
-      mockHttp as any
-    );
+    const result = await listActivationsTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any);
 
     expect(result).toEqual([]);
   });

@@ -15,9 +15,7 @@ export async function describeTableTool(
   http: DataCloudHttpClient
 ): Promise<Record<string, unknown>> {
   const orgCreds = await auth.getOrgCredentials(input.target_org);
-  return http.post(
-    `${orgCreds.instanceUrl}/services/data/v66.0/ssot/query`,
-    orgCreds.accessToken,
-    { sql: `SELECT * FROM ${input.table} LIMIT 0` }
-  );
+  return http.post(`${orgCreds.instanceUrl}/services/data/v66.0/ssot/query`, orgCreds.accessToken, {
+    sql: `SELECT * FROM ${input.table} LIMIT 0`
+  });
 }

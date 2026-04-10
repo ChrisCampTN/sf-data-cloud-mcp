@@ -10,24 +10,24 @@ const DLO_TO_DMO_MAPPING: Record<string, string> = {
   VARCHAR: "Text",
   DECIMAL: "Number",
   BOOLEAN: "Boolean",
-  DATE: "Date",                       // Must match DLO exactly for mappings
+  DATE: "Date", // Must match DLO exactly for mappings
   TIMESTAMP: "DateTime",
   "TIMESTAMP WITH TIME ZONE": "DateTime",
   INTEGER: "Number",
   BIGINT: "Number",
-  CURRENCY: "Currency"                // Must stay Currency for mappings
+  CURRENCY: "Currency" // Must stay Currency for mappings
 };
 
 const DLO_TO_DMO_CI_SQL: Record<string, string> = {
   VARCHAR: "Text",
   DECIMAL: "Number",
   BOOLEAN: "Checkbox",
-  DATE: "DateTime",                   // CI SQL requires DateTime, not Date
+  DATE: "DateTime", // CI SQL requires DateTime, not Date
   TIMESTAMP: "DateTime",
   "TIMESTAMP WITH TIME ZONE": "DateTime",
   INTEGER: "Number",
   BIGINT: "Number",
-  CURRENCY: "Number"                  // CI SQL treats Currency as Number
+  CURRENCY: "Number" // CI SQL treats Currency as Number
 };
 
 /**
@@ -50,11 +50,7 @@ export function cleanDmoFieldName(dloFieldName: string): string {
   if (dloFieldName.match(/_c_c__c$/)) {
     return dloFieldName.replace(/_c_c__c$/, "_c__c");
   }
-  if (
-    dloFieldName.match(/[a-z]_c__c$/) &&
-    !dloFieldName.startsWith("DataSource") &&
-    !dloFieldName.startsWith("KQ_")
-  ) {
+  if (dloFieldName.match(/[a-z]_c__c$/) && !dloFieldName.startsWith("DataSource") && !dloFieldName.startsWith("KQ_")) {
     return dloFieldName.replace(/_c__c$/, "__c");
   }
   return dloFieldName;

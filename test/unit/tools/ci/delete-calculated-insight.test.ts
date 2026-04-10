@@ -34,9 +34,6 @@ describe("deleteCalculatedInsightTool", () => {
     );
 
     expect(result.deleted).toBe(true);
-    expect(mockHttp.delete).toHaveBeenCalledWith(
-      expect.stringContaining("/calculated-insights/Test__cio"),
-      "token"
-    );
+    expect(mockHttp.delete).toHaveBeenCalledWith(expect.stringContaining("/calculated-insights/Test__cio"), "token");
   });
 });

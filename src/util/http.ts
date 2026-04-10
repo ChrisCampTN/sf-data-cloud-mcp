@@ -22,11 +22,7 @@ export class DataCloudHttpClient {
     return this.request<T>("GET", url, token);
   }
 
-  async post<T = unknown>(
-    url: string,
-    token: string,
-    body?: unknown
-  ): Promise<T> {
+  async post<T = unknown>(url: string, token: string, body?: unknown): Promise<T> {
     return this.request<T>("POST", url, token, body);
   }
 
@@ -34,11 +30,7 @@ export class DataCloudHttpClient {
     return this.request<T>("DELETE", url, token);
   }
 
-  async patch<T = unknown>(
-    url: string,
-    token: string,
-    body?: unknown
-  ): Promise<T> {
+  async patch<T = unknown>(url: string, token: string, body?: unknown): Promise<T> {
     return this.request<T>("PATCH", url, token, body);
   }
 
@@ -82,9 +74,7 @@ export class DataCloudHttpClient {
 
       if (page.nextPageUrl) {
         // Style 1: follow nextPageUrl (data-streams, data-actions)
-        currentUrl = page.nextPageUrl.startsWith("http")
-          ? page.nextPageUrl
-          : `${baseUrl}${page.nextPageUrl}`;
+        currentUrl = page.nextPageUrl.startsWith("http") ? page.nextPageUrl : `${baseUrl}${page.nextPageUrl}`;
       } else if (page.nextPageToken) {
         // Style 2: token-based pagination (calculated-insights collection pattern)
         const sep = currentUrl.includes("?") ? "&" : "?";
@@ -93,11 +83,7 @@ export class DataCloudHttpClient {
         // Offset fallback: API told us the total, we haven't reached it
         const sep = url.includes("?") ? "&" : "?";
         currentUrl = `${url}${sep}offset=${allItems.length}&batchSize=${pageSize}`;
-      } else if (
-        totalSize === undefined &&
-        page.items.length > 0 &&
-        page.items.length >= pageSize
-      ) {
+      } else if (totalSize === undefined && page.items.length > 0 && page.items.length >= pageSize) {
         // Offset fallback: no totalSize, page was full — assume more exist
         const sep = url.includes("?") ? "&" : "?";
         currentUrl = `${url}${sep}offset=${allItems.length}&batchSize=${pageSize}`;
@@ -110,12 +96,7 @@ export class DataCloudHttpClient {
     return { items: allItems, totalSize };
   }
 
-  private async request<T>(
-    method: string,
-    url: string,
-    token: string,
-    body?: unknown
-  ): Promise<T> {
+  private async request<T>(method: string, url: string, token: string, body?: unknown): Promise<T> {
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
@@ -140,21 +121,14 @@ export class DataCloudHttpClient {
         return (await response.json()) as T;
       }
 
-      const errorBody = await response
-        .json()
-        .catch(() => ({ message: `HTTP ${response.status}` }));
+      const errorBody = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
       const errorMessage = extractErrorMessage(errorBody, response.status);
 
-      if (
-        (response.status === 429 || response.status >= 500) &&
-        attempt < this.maxRetries
-      ) {
+      if ((response.status === 429 || response.status >= 500) && attempt < this.maxRetries) {
         lastError = new Error(errorMessage);
         // Respect Retry-After header if present, otherwise exponential backoff
         const retryAfter = response.headers.get("Retry-After");
-        const delayMs = retryAfter
-          ? parseRetryAfter(retryAfter)
-          : this.retryDelayMs * Math.pow(2, attempt);
+        const delayMs = retryAfter ? parseRetryAfter(retryAfter) : this.retryDelayMs * Math.pow(2, attempt);
         await new Promise((r) => setTimeout(r, delayMs));
         continue;
       }

@@ -19,10 +19,8 @@ describe("describeTableTool", () => {
       mockHttp as any
     );
 
-    expect(mockHttp.post).toHaveBeenCalledWith(
-      expect.stringContaining("/ssot/query"),
-      "token",
-      { sql: "SELECT * FROM credit_tier_models__dll LIMIT 0" }
-    );
+    expect(mockHttp.post).toHaveBeenCalledWith(expect.stringContaining("/ssot/query"), "token", {
+      sql: "SELECT * FROM credit_tier_models__dll LIMIT 0"
+    });
   });
 });

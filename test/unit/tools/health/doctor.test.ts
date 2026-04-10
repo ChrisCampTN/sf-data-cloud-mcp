@@ -20,11 +20,7 @@ describe("doctorTool", () => {
       })
     };
 
-    const result = await doctorTool(
-      { target_org: "TestOrg" },
-      mockAuth as any,
-      mockHttp as any
-    );
+    const result = await doctorTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any);
 
     expect(result.status).toBe("ok");
     expect(result.org).toBe("admin@test-org.com");

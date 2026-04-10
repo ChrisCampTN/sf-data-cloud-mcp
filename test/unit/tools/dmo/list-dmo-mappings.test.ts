@@ -27,9 +27,6 @@ describe("listDmoMappingsTool", () => {
     expect(result.sourceDlo).toBe("Billing_Account_c_00Dxx0000000001__dll");
     expect(result.targetDmo).toBe("PRA_BillingAccount__dlm");
     expect(result.mappings).toHaveLength(16);
-    expect(mockHttp.get).toHaveBeenCalledWith(
-      expect.stringContaining("dloDeveloperName="),
-      "token"
-    );
+    expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining("dloDeveloperName="), "token");
   });
 });

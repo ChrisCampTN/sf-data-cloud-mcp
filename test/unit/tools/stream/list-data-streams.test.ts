@@ -14,11 +14,7 @@ describe("listDataStreamsTool", () => {
       paginatedGet: vi.fn().mockResolvedValue({ items: fixture })
     };
 
-    const result = await listDataStreamsTool(
-      { target_org: "TestOrg" },
-      mockAuth as any,
-      mockHttp as any
-    );
+    const result = await listDataStreamsTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any);
 
     expect(result).toHaveLength(7);
     expect(result[0].name).toBe("Account_00Dxx0000000001");

@@ -15,11 +15,7 @@ describe("listDmosTool", () => {
       paginatedGet: vi.fn().mockResolvedValue({ items: fixture, totalSize: fixture.length })
     };
 
-    const result = await listDmosTool(
-      { target_org: "TestOrg" },
-      mockAuth as any,
-      mockHttp as any
-    );
+    const result = await listDmosTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any);
 
     expect(result).toHaveLength(3);
     expect(result[0].name).toBe("ssot__Account__dlm");
@@ -45,8 +41,8 @@ describe("listDmosTool", () => {
       paginatedGet: vi.fn().mockRejectedValue(new Error("Network error"))
     };
 
-    await expect(
-      listDmosTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any)
-    ).rejects.toThrow("Network error");
+    await expect(listDmosTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any)).rejects.toThrow(
+      "Network error"
+    );
   });
 });

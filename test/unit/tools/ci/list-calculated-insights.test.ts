@@ -16,11 +16,7 @@ describe("listCalculatedInsightsTool", () => {
       paginatedGet: vi.fn().mockResolvedValue({ items: rawFixture, totalSize: rawFixture.length })
     };
 
-    const result = await listCalculatedInsightsTool(
-      { target_org: "TestOrg" },
-      mockAuth as any,
-      mockHttp as any
-    );
+    const result = await listCalculatedInsightsTool({ target_org: "TestOrg" }, mockAuth as any, mockHttp as any);
 
     expect(result).toHaveLength(1);
     expect(result[0].apiName).toBe("PRA_Credit_Tier_Assignment__cio");

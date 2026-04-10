@@ -4,7 +4,9 @@ import type { DataCloudHttpClient } from "../../util/http.js";
 
 export const createDmoMappingInputSchema = z.object({
   target_org: z.string().describe("Salesforce org alias or username"),
-  mapping: z.record(z.string(), z.unknown()).describe("Mapping definition with sourceDlo, targetDmo, and fieldMappings"),
+  mapping: z
+    .record(z.string(), z.unknown())
+    .describe("Mapping definition with sourceDlo, targetDmo, and fieldMappings"),
   confirm: z.boolean().optional().describe("Set to true to execute. Omit for preview.")
 });
 

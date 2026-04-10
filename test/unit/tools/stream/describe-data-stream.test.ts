@@ -20,9 +20,6 @@ describe("describeDataStreamTool", () => {
     );
 
     expect(result.name).toBe("TestStream");
-    expect(mockHttp.get).toHaveBeenCalledWith(
-      expect.stringContaining("/data-streams/TestStream"),
-      "token"
-    );
+    expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining("/data-streams/TestStream"), "token");
   });
 });

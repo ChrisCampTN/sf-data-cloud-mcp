@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  correctDmoFieldType,
-  cleanDmoFieldName
-} from "../../../src/smart/type-mapper.js";
+import { correctDmoFieldType, cleanDmoFieldName } from "../../../src/smart/type-mapper.js";
 
 describe("correctDmoFieldType — ci_sql context (default)", () => {
   it("converts DATE to DateTime for CI SQL", () => {
@@ -55,9 +52,7 @@ describe("cleanDmoFieldName", () => {
   });
 
   it("strips _c_c__c pattern to _c__c", () => {
-    expect(cleanDmoFieldName("Adjusted_Credit_Score_c_c__c")).toBe(
-      "Adjusted_Credit_Score_c__c"
-    );
+    expect(cleanDmoFieldName("Adjusted_Credit_Score_c_c__c")).toBe("Adjusted_Credit_Score_c__c");
   });
 
   it("leaves system fields unchanged", () => {

@@ -13,10 +13,7 @@ export interface DataCloudCredentials {
 
 export class AuthManager {
   private orgCache = new Map<string, OrgCredentials>();
-  private dcCache = new Map<
-    string,
-    { creds: DataCloudCredentials; expiresAt: number }
-  >();
+  private dcCache = new Map<string, { creds: DataCloudCredentials; expiresAt: number }>();
 
   async getOrgCredentials(targetOrg: string): Promise<OrgCredentials> {
     const cached = this.orgCache.get(targetOrg);
@@ -40,35 +37,27 @@ export class AuthManager {
     return creds;
   }
 
-  async getDataCloudCredentials(
-    targetOrg: string
-  ): Promise<DataCloudCredentials> {
+  async getDataCloudCredentials(targetOrg: string): Promise<DataCloudCredentials> {
     const cached = this.dcCache.get(targetOrg);
     if (cached && cached.expiresAt > Date.now()) return cached.creds;
 
     return this.exchangeDcToken(targetOrg, false);
   }
 
-  private async exchangeDcToken(
-    targetOrg: string,
-    isRetry: boolean
-  ): Promise<DataCloudCredentials> {
+  private async exchangeDcToken(targetOrg: string, isRetry: boolean): Promise<DataCloudCredentials> {
     const orgCreds = await this.getOrgCredentials(targetOrg);
 
-    const response = await fetch(
-      `${orgCreds.instanceUrl}/services/a360/token`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer ${orgCreds.accessToken}`
-        },
-        body: "grant_type=urn:salesforce:grant-type:external:cdp"
-      }
-    );
+    const response = await fetch(`${orgCreds.instanceUrl}/services/a360/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${orgCreds.accessToken}`
+      },
+      body: "grant_type=urn:salesforce:grant-type:external:cdp"
+    });
 
     if (!response.ok) {
-      const errorBody = await response.json().catch(() => ({})) as Record<string, unknown>;
+      const errorBody = (await response.json().catch(() => ({}))) as Record<string, unknown>;
 
       // If "invalid subject token" and we haven't retried, the org token may be stale
       if (!isRetry && String(errorBody.error_description ?? "").includes("invalid subject token")) {
@@ -79,26 +68,28 @@ export class AuthManager {
       const detail = errorBody.error_description ?? errorBody.message ?? JSON.stringify(errorBody);
       throw new Error(
         `Data Cloud token exchange failed: ${detail}. ` +
-        `If this persists, use org token tools (query_sql, list_dmos) instead of DC token tools (query_profile). ` +
-        `Verify Data Cloud is enabled: Setup > Data Cloud > Settings.`
+          `If this persists, use org token tools (query_sql, list_dmos) instead of DC token tools (query_profile). ` +
+          `Verify Data Cloud is enabled: Setup > Data Cloud > Settings.`
       );
     }
 
     const tokenResponse = (await response.json()) as Record<string, unknown>;
 
     const accessToken = (tokenResponse.access_token ?? tokenResponse.accessToken) as string;
-    const instanceUrl = (
-      tokenResponse.instance_url ??
+    const instanceUrl = (tokenResponse.instance_url ??
       tokenResponse.instanceUrl ??
       tokenResponse.cdp_instance_url ??
-      tokenResponse.cdpInstanceUrl
-    ) as string;
+      tokenResponse.cdpInstanceUrl) as string;
 
     if (!accessToken) {
-      throw new Error(`Data Cloud token exchange returned no access token. Response keys: ${Object.keys(tokenResponse).join(", ")}`);
+      throw new Error(
+        `Data Cloud token exchange returned no access token. Response keys: ${Object.keys(tokenResponse).join(", ")}`
+      );
     }
     if (!instanceUrl) {
-      throw new Error(`Data Cloud token exchange returned no instance URL. Response keys: ${Object.keys(tokenResponse).join(", ")}`);
+      throw new Error(
+        `Data Cloud token exchange returned no instance URL. Response keys: ${Object.keys(tokenResponse).join(", ")}`
+      );
     }
 
     const creds: DataCloudCredentials = { accessToken, instanceUrl };

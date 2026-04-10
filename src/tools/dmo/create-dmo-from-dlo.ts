@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { AuthManager } from "../../auth/auth-manager.js";
 import type { DataCloudHttpClient } from "../../util/http.js";
 
-
 export const createDmoFromDloInputSchema = z.object({
   target_org: z.string().describe("Salesforce org alias or username"),
   dlo_name: z.string().describe("DLO table name (e.g. Billing_Account_c_00Dxx0000000001__dll)"),
@@ -17,9 +16,7 @@ export type CreateDmoFromDloInput = z.infer<typeof createDmoFromDloInputSchema>;
 
 function dloFieldToDmoFieldName(dloFieldName: string): string {
   // Custom fields get doubled suffix: Field__c → Field_c__c
-  return dloFieldName.endsWith("__c")
-    ? dloFieldName.replace(/__c$/, "_c__c")
-    : dloFieldName;
+  return dloFieldName.endsWith("__c") ? dloFieldName.replace(/__c$/, "_c__c") : dloFieldName;
 }
 
 export async function createDmoFromDloTool(
@@ -39,27 +36,25 @@ export async function createDmoFromDloTool(
 
   // Filter fields
   if (input.include_fields) {
-    columns = columns.filter(c => input.include_fields!.includes(c.name));
+    columns = columns.filter((c) => input.include_fields!.includes(c.name));
   }
   if (input.exclude_fields) {
-    columns = columns.filter(c => !input.exclude_fields!.includes(c.name));
+    columns = columns.filter((c) => !input.exclude_fields!.includes(c.name));
   }
 
   const dmoName = input.dmo_name ?? input.dlo_name.replace(/__dll$/, "__dlm");
   const category = input.category ?? "OTHER";
 
   // Build DMO definition using POST schema (dataType, no __dlm/__c suffixes)
-  const dmoFields = columns.map(col => {
+  const dmoFields = columns.map((col) => {
     const dmoFieldName = dloFieldToDmoFieldName(col.name);
     // Strip __c from field name — API auto-appends it
-    const createFieldName = dmoFieldName.endsWith("__c")
-      ? dmoFieldName.replace(/__c$/, "")
-      : dmoFieldName;
+    const createFieldName = dmoFieldName.endsWith("__c") ? dmoFieldName.replace(/__c$/, "") : dmoFieldName;
     // Primary key: match Id__c, Key__c, or KQ_Id__c patterns specifically
     const isPK = /^(Id|Key|KQ_Id)(__c|_c__c|_c)?$/i.test(col.name);
     return {
       name: createFieldName,
-      dataType: col.type,  // Use DLO type directly for mapping compatibility
+      dataType: col.type, // Use DLO type directly for mapping compatibility
       label: col.name.replace(/__c$/g, "").replace(/_/g, " ").trim(),
       isPrimaryKey: isPK
     };
@@ -76,7 +71,7 @@ export async function createDmoFromDloTool(
   };
 
   // Build mapping definition
-  const fieldMappings = columns.map(col => ({
+  const fieldMappings = columns.map((col) => ({
     sourceField: col.name,
     targetField: dloFieldToDmoFieldName(col.name)
   }));
