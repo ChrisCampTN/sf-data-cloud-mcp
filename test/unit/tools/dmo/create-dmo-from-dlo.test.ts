@@ -79,4 +79,55 @@ describe("createDmoFromDloTool", () => {
     const fieldNames = result.dmo_definition.fields.map((f: any) => f.name);
     expect(fieldNames).not.toContain("cdp_sys_record_currency_c__c");
   });
+
+  it("uses mapping context for field types (DATE stays Date)", async () => {
+    const mockHttp = {
+      get: vi.fn().mockResolvedValue({ metadata: dloFixture }),
+      post: vi.fn()
+    };
+
+    const result = await createDmoFromDloTool(
+      {
+        target_org: "TestOrg",
+        dlo_name: "Billing_Account_c_00Dxx0000000001__dll",
+        dmo_name: "PRA_BillingAccount__dlm",
+        confirm: false
+      },
+      mockAuth as any,
+      mockHttp as any
+    );
+
+    // dloFixture has Default_Processed_Date_c__c with type DATE
+    // and First_Successful_Payment_Date_Only_c__c with type DATE
+    // In mapping context, DATE should stay "Date" not become "DateTime"
+    const fields = (result.dmo_definition as any).fields as any[];
+    const dateField = fields.find((f: any) =>
+      f.name.includes("Default_Processed_Date")
+    );
+    expect(dateField.dataType).toBe("Date");
+  });
+
+  it("strips __c suffix from DMO field names in create payload", async () => {
+    const mockHttp = {
+      get: vi.fn().mockResolvedValue({ metadata: dloFixture }),
+      post: vi.fn()
+    };
+
+    const result = await createDmoFromDloTool(
+      {
+        target_org: "TestOrg",
+        dlo_name: "Billing_Account_c_00Dxx0000000001__dll",
+        dmo_name: "PRA_BillingAccount__dlm",
+        confirm: false
+      },
+      mockAuth as any,
+      mockHttp as any
+    );
+
+    const fields = (result.dmo_definition as any).fields as any[];
+    // No field name in the create payload should end with __c
+    for (const field of fields) {
+      expect(field.name).not.toMatch(/__c$/);
+    }
+  });
 });
