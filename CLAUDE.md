@@ -78,6 +78,9 @@ npm run lint           # Type check without emit
 - Smart layer modules must be testable without HTTP mocks (pure input → output where possible)
 - Commit after each task or logical group of tools completes with passing tests
 - Do not skip tests or mark them as todo/skip
+- Before committing: verify `npm test` passes, `npm run build` compiles, and the change matches the requested scope
+- Flag any intentional behavior change in the commit message — silent semantic shifts cause production bugs
+- Before modifying API calls, check the API Quirks section for known issues with that endpoint
 
 ## API Quirks (from hands-on testing 2026-04-08)
 
