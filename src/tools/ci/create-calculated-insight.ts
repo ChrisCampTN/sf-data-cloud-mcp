@@ -1,21 +1,7 @@
 import { z } from "zod";
 import type { AuthManager } from "../../auth/auth-manager.js";
 import type { DataCloudHttpClient } from "../../util/http.js";
-
-const SCHEDULE_MAP: Record<string, string> = {
-  daily: "TwentyFour",
-  "24h": "TwentyFour",
-  "12h": "Twelve",
-  "6h": "Six",
-  "1h": "One",
-  none: "NotScheduled",
-  off: "NotScheduled",
-  TwentyFour: "TwentyFour",
-  Twelve: "Twelve",
-  Six: "Six",
-  One: "One",
-  NotScheduled: "NotScheduled"
-};
+import { resolveScheduleInterval } from "./schedule-map.js";
 
 export const createCalculatedInsightInputSchema = z.object({
   target_org: z.string().describe("Salesforce org alias or username"),
@@ -41,10 +27,7 @@ function enhanceDefinition(definition: Record<string, unknown>): EnhanceResult {
 
   // Translate schedule interval
   if (typeof enhanced.publishScheduleInterval === "string") {
-    const mapped = SCHEDULE_MAP[enhanced.publishScheduleInterval];
-    if (mapped) {
-      enhanced.publishScheduleInterval = mapped;
-    }
+    enhanced.publishScheduleInterval = resolveScheduleInterval(enhanced.publishScheduleInterval as string);
   }
 
   // Warn if expression references DLO tables (__dll) — CIs require DMO tables (__dlm)

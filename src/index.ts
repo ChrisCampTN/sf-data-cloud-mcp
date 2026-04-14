@@ -32,6 +32,10 @@ import {
   deleteCalculatedInsightTool,
   deleteCalculatedInsightInputSchema
 } from "./tools/ci/delete-calculated-insight.js";
+import {
+  updateCalculatedInsightTool,
+  updateCalculatedInsightInputSchema
+} from "./tools/ci/update-calculated-insight.js";
 
 // Query
 import { querySqlTool, querySqlInputSchema } from "./tools/query/query-sql.js";
@@ -238,6 +242,13 @@ server.tool(
   "Delete a Calculated Insight",
   deleteCalculatedInsightInputSchema.shape,
   safeTool((p) => deleteCalculatedInsightTool(p, auth, http))
+);
+
+server.tool(
+  "update_calculated_insight",
+  "Update a Calculated Insight (schedule, enable/disable). Interval: daily | 12h | 6h | 1h | off",
+  updateCalculatedInsightInputSchema.shape,
+  safeTool((p) => updateCalculatedInsightTool(p, auth, http))
 );
 
 // Query tools
